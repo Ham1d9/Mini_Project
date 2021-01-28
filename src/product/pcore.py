@@ -1,5 +1,5 @@
 import pyinputplus as pyip
-import os
+
 products = ['apple', 'orange']
 productmenu = """
 
@@ -55,4 +55,6 @@ def product_menu(products):
             
         elif  option2 == 4:
             remove_product(products)
+
+
         
