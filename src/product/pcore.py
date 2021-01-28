@@ -1,6 +1,6 @@
 import pyinputplus as pyip
 
-products = ['apple', 'orange']
+products = ['apple', ]
 productmenu = """
 
 Slecet a Number for your Chosen Option 
