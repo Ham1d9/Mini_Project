@@ -13,12 +13,9 @@ def save_txt (datain: list, file):
         for row in datain: 
             opened_file.write(f"{row}\n")
 
-# def read_csv(file):  
-#     with open(file) as f:
-#         z = csv.DictReader(f)      
-#         for line in z:  
-#             print(line)
-    
+  
+
+# for dic use below ones 
 
 def read_csv(filename):
     data = []
@@ -28,11 +25,6 @@ def read_csv(filename):
             data.append(line)
     return data
 
-def save_csv(data: list, file_name):
-    field_name= ['fruit', 'colour']
-    with open(file_name, mode = 'w', newline='') as fd:
-        c = csv.writer(fd,  delimiter=',')
-        c.writerow(data)
     
 def write_csv(data: list, filename):
     with open(filename, mode="w", newline="\n") as sf:
@@ -40,8 +32,6 @@ def write_csv(data: list, filename):
         writer.writeheader()
         for row in data:
             writer.writerow(row)
-            
-products = read_csv('../../data/products.csv')
 
-
-save_csv(products, '../../data/products.csv')
+def save(data):
+    write_csv(data, "./data/orders.csv")

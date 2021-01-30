@@ -1,6 +1,8 @@
 import pyinputplus as pyip
+from src.persistence.core import read_txt
 
-products = ['apple', ]
+products = read_txt('./data/products.csv')
+
 productmenu = """
 
 Slecet a Number for your Chosen Option 
@@ -34,7 +36,7 @@ def remove_product(products_data):
     return products_data
 
 
-def product_menu(products):
+def product_menu(products_data):
     
     while True:
         
@@ -45,16 +47,19 @@ def product_menu(products):
             break
 
         elif option2 == 1:
-            print(products)
+            print(products_data)
 
         elif option2 == 2:
-            new_product(products)
+            new_product(products_data)
             
         elif option2 == 3:
-            update_product(products)
+            update_product(products_data)
             
         elif  option2 == 4:
-            remove_product(products)
+            remove_product(products_data)
 
 
-        
+
+
+
+    
