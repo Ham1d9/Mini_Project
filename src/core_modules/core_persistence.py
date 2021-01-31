@@ -33,5 +33,11 @@ def write_csv(data: list, filename):
         for row in data:
             writer.writerow(row)
 
-def save(data):
+def save_order(data):
     write_csv(data, "./data/orders.csv")
+
+def save_product(data):
+    save_txt(data, "./data/product.csv" )
+    
+def save_courier(data):
+    save_txt(data, "./data/courier.txt" )

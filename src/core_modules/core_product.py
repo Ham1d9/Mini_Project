@@ -1,7 +1,6 @@
 import pyinputplus as pyip
-from src.persistence.core import read_txt
+from src.core_modules.core_persistence import save_product
 
-products = read_txt('./data/products.csv')
 
 productmenu = """
 
@@ -21,7 +20,7 @@ def new_product(products_data):
     return products_data
 
 def update_product(products_data):
-    selectedproduct = pyip.inputMenu(products_data)
+    selectedproduct = pyip.inputMenu(products_data, numbered=True)
     updateproduct = str(input('Wrtite the new product: '))
             
     for n, i in enumerate(products_data):
@@ -30,7 +29,7 @@ def update_product(products_data):
             return products_data
         
 def remove_product(products_data):
-    remove_product = pyip.inputMenu(products_data)
+    remove_product = pyip.inputMenu(products_data, numbered=True)
     print('the product is removed')
     products_data.remove(remove_product)
     return products_data
@@ -43,7 +42,7 @@ def product_menu(products_data):
         option2 = pyip.inputNum(productmenu, min = 0, max = 4)
 
         if option2 == 0:
-            
+            save_product(products_data)
             break
 
         elif option2 == 1:

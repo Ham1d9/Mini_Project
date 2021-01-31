@@ -1,6 +1,6 @@
 import pyinputplus as pyip
+from src.core_modules.core_persistence import save_courier
 
-courier = ['hello', 'cat', 'fish']
 couriermenu = """
 
 Slecet a Number for your Chosen Option 
@@ -19,7 +19,7 @@ def new_courier(courier_data):
     return courier_data
 
 def update_courier(courier_data):
-    selectedcourier = pyip.inputMenu(courier_data)
+    selectedcourier = pyip.inputMenu(courier_data, numbered=True)
     updatecourier = str(input('Wrtite the new courier: '))
             
     for n, i in enumerate(courier_data):
@@ -28,7 +28,7 @@ def update_courier(courier_data):
             return courier_data
         
 def remove_courier(courier_data):
-    remove_courier = pyip.inputMenu(courier_data)
+    remove_courier = pyip.inputMenu(courier_data, numbered=True)
     print('the courier is removed')
     courier_data.remove(remove_courier)
     return courier_data
@@ -41,7 +41,7 @@ def courier_menu(courier_data):
         option2 = pyip.inputNum(couriermenu, min = 0, max = 4)
 
         if option2 == 0:
-            
+            save_courier(courier_data)
             break
 
         elif option2 == 1:
@@ -56,4 +56,3 @@ def courier_menu(courier_data):
         elif  option2 == 4:
             remove_courier(courier_data)
 
-courier_menu(courier)

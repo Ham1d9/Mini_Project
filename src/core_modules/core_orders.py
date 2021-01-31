@@ -1,5 +1,5 @@
 import csv
-from src.persistence.core_persistence import save, read_csv
+from src.core_modules.core_persistence import save_order
 import pyinputplus as pyip
 import os
 
@@ -21,7 +21,7 @@ def view_orders(orders):
     for order in orders:
         # print(f"""{idx} - Customer Name: {order['customer_name']}, Customer Address: {order['customer_address']}
         #     Customer Phone: {order['customer_phone']}, Courier: {order['courier']}, Status: {order['status']}""")
-        print(f"{idx} - {order}")
+        print(f"{[idx]} - {order}")
         idx += 1
 
 
@@ -42,8 +42,7 @@ def create_orders(orders):
     }
 
     orders.append(order_append)
-    print(orders)
-    save(orders)
+    save_order(orders)
     return orders
 
 
@@ -59,7 +58,7 @@ def update_orders(orders):
             else:
                 orders[idx][key] = update
 
-    save(orders)
+    save_order(orders)
     return orders
 
 
@@ -67,7 +66,7 @@ def delete_orders(orders):
     view_orders(orders)
     idx = int(input("Select: "))
     orders.pop(idx)
-    save(orders)
+    save_order(orders)
     return orders
 
 
@@ -92,9 +91,9 @@ def order_sub_menu(order_data):
         elif  option == 4:
             delete_orders(order_data)
 
-orders = read_csv('./data/orders.csv')
 
-order_sub_menu(orders)
+
+
 
 
 
