@@ -46,7 +46,7 @@ def create_orders(orders,input,save_order):
     return orders
 
 
-def update_orders(orders):
+def update_orders(orders,input,save_order,view_orders):
     view_orders(orders)
     idx = int(input("Select: "))
 
