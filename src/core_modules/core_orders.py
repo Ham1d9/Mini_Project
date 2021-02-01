@@ -26,7 +26,7 @@ def view_orders(orders):
 
 
 
-def create_orders(orders):
+def create_orders(orders,input,save_order):
     name = str(input("Name: "))
     address = str(input("Address: "))
     phone = int(input("phone: "))
@@ -62,7 +62,7 @@ def update_orders(orders):
     return orders
 
 
-def delete_orders(orders):
+def delete_orders(orders,view_orders,input,save_order):
     view_orders(orders)
     idx = int(input("Select: "))
     orders.pop(idx)
