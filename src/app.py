@@ -5,7 +5,7 @@ from src.core_modules.core_orders import order_sub_menu
 from src.core_modules.core_courier import courier_menu
 from src.core_modules.core_persistence import read_txt,read_csv
 
-products = read_txt('./data/products.csv')
+products = read_csv('./data/products.csv')
 courier = read_txt('./data/courier.txt')
 orders = read_csv('./data/orders.csv')
 

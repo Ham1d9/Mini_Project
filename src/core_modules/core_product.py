@@ -1,4 +1,5 @@
 import pyinputplus as pyip
+import os
 from src.core_modules.core_persistence import save_product
 
 
@@ -13,49 +14,73 @@ Slecet a Number for your Chosen Option
 [4]  Delete a Product 
 
 """
-def new_product(products_data):
-    newproduct = str(input('write name of new product: '))            
-    products_data.append(newproduct)
 
-    return products_data
+def view_products(products):
+    os.system("clear")
+    idx = 0
+    for product in products:
+        print(f"{[idx]} - {product}")
+        idx += 1
 
-def update_product(products_data):
-    selectedproduct = pyip.inputMenu(products_data, numbered=True)
-    updateproduct = str(input('Wrtite the new product: '))
-            
-    for n, i in enumerate(products_data):
-        if i == selectedproduct:
-            products_data[n]= updateproduct
-            return products_data
-        
-def remove_product(products_data):
-    remove_product = pyip.inputMenu(products_data, numbered=True)
-    print('the product is removed')
-    products_data.remove(remove_product)
-    return products_data
+def create_products(products):
+    name = str(input("name: "))
+    price = float(input("price: "))
+
+
+    product_append = {
+        "name": name,
+        "price": price,
+      
+    }
+
+    products.append(product_append)
+    save_product(products)
+    return products
+
+def update_products(products):
+    view_products(products)
+    idx = int(input("Select: "))
+
+    for key in products[idx].keys():
+        update = input(f"{key}: ")
+        if update != "":
+            if key ==  "price":
+                products[idx][key] = float(update)
+            else:
+                products[idx][key] = update
+
+    save_product(products)
+    return products
+
+def delete_products(products):
+    view_products(products)
+    idx = int(input("Select: "))
+    products.pop(idx)
+    save_product(products)
+    return products
+
 
 
 def product_menu(products_data):
     
     while True:
-        
+
         option2 = pyip.inputNum(productmenu, min = 0, max = 4)
 
         if option2 == 0:
-            save_product(products_data)
             break
 
         elif option2 == 1:
-            print(products_data)
+            view_products(products_data)
 
         elif option2 == 2:
-            new_product(products_data)
+            create_products(products_data)
             
         elif option2 == 3:
-            update_product(products_data)
+            update_products(products_data)
             
         elif  option2 == 4:
-            remove_product(products_data)
+            delete_products(products_data)
 
 
 

@@ -19,8 +19,6 @@ def view_orders(orders):
     os.system("clear")
     idx = 0
     for order in orders:
-        # print(f"""{idx} - Customer Name: {order['customer_name']}, Customer Address: {order['customer_address']}
-        #     Customer Phone: {order['customer_phone']}, Courier: {order['courier']}, Status: {order['status']}""")
         print(f"{[idx]} - {order}")
         idx += 1
 
@@ -83,13 +81,13 @@ def order_sub_menu(order_data):
             view_orders(order_data)
 
         elif option == 2:
-            create_orders(order_data)
+            create_orders(order_data,input,save_order)
             
         elif option == 3:
-            update_orders(order_data)
+            update_orders(order_data,input,save_order,view_orders)
             
         elif  option == 4:
-            delete_orders(order_data)
+            delete_orders(order_data,view_orders,input,save_order)
 
 
 
