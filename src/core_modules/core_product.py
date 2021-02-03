@@ -84,6 +84,3 @@ def product_menu(products_data):
 
 
 
-
-
-    

@@ -1,0 +1,4 @@
+pyinputplus
+pymysql
+python-dotenv
+cryptography
