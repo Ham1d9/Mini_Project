@@ -1,18 +1,18 @@
 import csv 
 
 # for txt files not in use
-def read_txt(file_name: str):
+# def read_txt(file_name: str):
     
-    with open(file_name, "r") as file:
+#     with open(file_name, "r") as file:
         
-        data = file.read().splitlines()   
-    return data
+#         data = file.read().splitlines()   
+#     return data
 
 
-def save_txt (datain: list, file):
-    with open(file, "w") as opened_file:
-        for row in datain: 
-            opened_file.write(f"{row}\n")
+# def save_txt (datain: list, file):
+#     with open(file, "w") as opened_file:
+#         for row in datain: 
+#             opened_file.write(f"{row}\n")
 
   
 
