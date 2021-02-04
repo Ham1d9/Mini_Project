@@ -1,3 +1,4 @@
+import os
 import pyinputplus as pyip
 from src.core_modules.core_persistence import save_courier
 
@@ -12,26 +13,48 @@ Slecet a Number for your Chosen Option
 [4]  Delete a courier 
 
 """
-def new_courier(courier_data):
-    newcourier = str(input('write name of new courier: '))            
-    courier_data.append(newcourier)
 
-    return courier_data
 
-def update_courier(courier_data):
-    selectedcourier = pyip.inputMenu(courier_data, numbered=True)
-    updatecourier = str(input('Wrtite the new courier: '))
+def view_couriers(couriers):
+    os.system("clear")
+    idx = 0
+    for courier in couriers:
+        print(f"{[idx]} - {courier}")
+        idx += 1
+
+def create_couriers(couriers):
+    name = str(input("name: "))
+    phone = str(input("phone: "))
+
+
+    courier_append = {
+        "name": name,
+        "phone": phone,
+      
+    }
+
+    couriers.append(courier_append)
+    save_courier(couriers)
+    return couriers
+
+def update_couriers(couriers):
+    view_couriers(couriers)
+    idx = int(input("Select: "))
+
+    for key in couriers[idx].keys():
+        update = input(f"{key}: ")
+        if update != "":
+                couriers[idx][key] = str(update)
             
-    for n, i in enumerate(courier_data):
-        if i == selectedcourier:
-            courier_data[n]= updatecourier
-            return courier_data
-        
-def remove_courier(courier_data):
-    remove_courier = pyip.inputMenu(courier_data, numbered=True)
-    print('the courier is removed')
-    courier_data.remove(remove_courier)
-    return courier_data
+    save_courier(couriers)
+    return couriers
+
+def delete_couriers(couriers):
+    view_couriers(couriers)
+    idx = int(input("Select: "))
+    couriers.pop(idx)
+    save_courier(couriers)
+    return couriers
 
 
 def courier_menu(courier_data):
@@ -45,14 +68,14 @@ def courier_menu(courier_data):
             break
 
         elif option2 == 1:
-            print(courier_data)
+            view_couriers(courier_data)
 
         elif option2 == 2:
-            new_courier(courier_data)
+            create_couriers(courier_data)
             
         elif option2 == 3:
-            update_courier(courier_data)
+            update_couriers(courier_data)
             
         elif  option2 == 4:
-            remove_courier(courier_data)
+            delete_couriers(courier_data)
 

@@ -1,5 +1,6 @@
 import csv 
 
+# for txt files not in use
 def read_txt(file_name: str):
     
     with open(file_name, "r") as file:
@@ -37,7 +38,7 @@ def save_order(data):
     write_csv(data, "./data/orders.csv")
 
 def save_product(data):
-    save_txt(data, "./data/product.csv" )
+    write_csv(data, "./data/products.csv" )
     
 def save_courier(data):
-    save_txt(data, "./data/courier.txt" )
+    write_csv(data, "./data/courier.csv" )
