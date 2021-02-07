@@ -1,30 +1,35 @@
 import pyinputplus as pyip
 import os
+import tabulate
 from src.core_modules.core_persistence import save_product
 
 
 productmenu = """
-
 Slecet a Number for your Chosen Option 
-
-[0]  Return to Main Menu
+--------------------------------------
+     Product Menu
+--------------------------------------
 [1]  Print the products 
 [2]  Create a new Products 
 [3]  Update a Product 
 [4]  Delete a Product 
-
+---------------------------------------
+[0]  Return to Main Menu
 """
 
 def view_products(products):
     os.system("clear")
-    idx = 0
-    for product in products:
-        print(f"{[idx]} - {product}")
-        idx += 1
-
+    print(tabulate.tabulate(products, headers="keys", tablefmt ="fancy_grid", showindex=True))
+    
 def create_products(products):
+    os.system("clear")
     name = str(input("name: "))
-    price = float(input("price: "))
+    while True:
+        try: 
+            price = float(input("price: "))
+            break
+        except ValueError:
+            print("Only numbers are allowed")
 
 
     product_append = {
@@ -39,7 +44,7 @@ def create_products(products):
 
 def update_products(products):
     view_products(products)
-    idx = int(input("Select: "))
+    idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(products))
 
     for key in products[idx].keys():
         update = input(f"{key}: ")
@@ -57,14 +62,14 @@ def delete_products(products):
     idx = int(input("Select: "))
     products.pop(idx)
     save_product(products)
+    
     return products
-
 
 
 def product_menu(products_data):
     
     while True:
-
+        
         option2 = pyip.inputNum(productmenu, min = 0, max = 4)
 
         if option2 == 0:

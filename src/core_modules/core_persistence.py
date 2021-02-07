@@ -1,20 +1,5 @@
 import csv 
 
-# for txt files not in use
-# def read_txt(file_name: str):
-    
-#     with open(file_name, "r") as file:
-        
-#         data = file.read().splitlines()   
-#     return data
-
-
-# def save_txt (datain: list, file):
-#     with open(file, "w") as opened_file:
-#         for row in datain: 
-#             opened_file.write(f"{row}\n")
-
-  
 
 # for dic use below ones 
 
@@ -42,3 +27,5 @@ def save_product(data):
     
 def save_courier(data):
     write_csv(data, "./data/courier.csv" )
+    
+    

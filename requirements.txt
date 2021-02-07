@@ -1,4 +1,5 @@
 pyinputplus
+tabulate
 pymysql
 python-dotenv
 cryptography

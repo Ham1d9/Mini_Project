@@ -1,28 +1,28 @@
 import os
+import tabulate
 import pyinputplus as pyip
 from src.core_modules.core_persistence import save_courier
 
 couriermenu = """
-
 Slecet a Number for your Chosen Option 
-
-[0]  Return to Main Menu
+--------------------------------------
+     Courier Menu
+--------------------------------------
 [1]  Print the courier 
 [2]  Create a new courier 
 [3]  Update a courier 
 [4]  Delete a courier 
-
+--------------------------------------
+[0]  Return to Main Menu
 """
 
 
 def view_couriers(couriers):
     os.system("clear")
-    idx = 0
-    for courier in couriers:
-        print(f"{[idx]} - {courier}")
-        idx += 1
-
+    print(tabulate.tabulate(couriers, headers="keys", tablefmt ="fancy_grid", showindex=True))
+    
 def create_couriers(couriers):
+    os.system("clear")
     name = str(input("name: "))
     phone = str(input("phone: "))
 
@@ -35,18 +35,20 @@ def create_couriers(couriers):
 
     couriers.append(courier_append)
     save_courier(couriers)
+    os.system("clear")
     return couriers
 
 def update_couriers(couriers):
     view_couriers(couriers)
-    idx = int(input("Select: "))
+    idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(couriers))
 
     for key in couriers[idx].keys():
         update = input(f"{key}: ")
         if update != "":
-                couriers[idx][key] = str(update)
+                couriers[idx][key] = update
             
     save_courier(couriers)
+    os.system("clear")
     return couriers
 
 def delete_couriers(couriers):
@@ -54,6 +56,7 @@ def delete_couriers(couriers):
     idx = int(input("Select: "))
     couriers.pop(idx)
     save_courier(couriers)
+    os.system("clear")
     return couriers
 
 
