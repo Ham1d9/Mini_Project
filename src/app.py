@@ -4,11 +4,10 @@ import pyinputplus as pyip
 from src.core_modules.core_product import product_menu
 from src.core_modules.core_orders import order_sub_menu
 from src.core_modules.core_courier import courier_menu
-from src.core_modules.core_persistence import read_csv
+from src.core_modules.core_persistence import load_state
 
-products = read_csv('./data/products.csv')
-courier = read_csv('./data/courier.csv')
-orders = read_csv('./data/orders.csv')
+
+state  = load_state()
 
 
 MainMenu = """
@@ -37,14 +36,14 @@ while True:
     
     elif option == 1:
         os.system("clear")
-        product_menu(products)
+        product_menu(state)
     
     elif option == 2:
         os.system("clear")
-        courier_menu(courier)
+        courier_menu(state)
     
     elif option == 3:
         os.system("clear")
-        order_sub_menu(orders,courier,products)
+        order_sub_menu(state)
         
         

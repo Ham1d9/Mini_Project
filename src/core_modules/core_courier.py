@@ -1,7 +1,8 @@
 import os
 import tabulate
 import pyinputplus as pyip
-from src.core_modules.core_persistence import save_courier
+from src.core_modules.core_persistence import save_state
+from src.core_modules.db import query, connection
 
 couriermenu = """
 Slecet a Number for your Chosen Option 
@@ -16,12 +17,40 @@ Slecet a Number for your Chosen Option
 [0]  Return to Main Menu
 """
 
+# conn = connection()
+# sel_all_courier = "select * from courier"
+# couriers = query(conn,sel_all_courier)
 
-def view_couriers(couriers):
-    os.system("clear")
-    print(tabulate.tabulate(couriers, headers="keys", tablefmt ="fancy_grid", showindex=True))
+# print(couriers)
+
+# def parse_courier(raw):
     
-def create_couriers(couriers):
+#     return{
+#         "id":raw[0],
+#         "name":raw[1],
+#         "phone":raw[2]
+#          }
+
+# def parse_couriers(couriers):
+#     c = []
+#     for courier in couriers:
+#         parsed = parse_courier(courier)
+#         c.append(parsed)
+#     return c
+    
+# final_c = parse_couriers(couriers)
+# print(final_c)
+
+# def update_couriers_sql():
+    
+    
+
+
+def view_couriers(state):
+    os.system("clear")
+    print(tabulate.tabulate(state["couriers"], headers="keys", tablefmt ="fancy_grid", showindex=True))
+    
+def create_couriers(state):
     os.system("clear")
     name = str(input("name: "))
     phone = str(input("phone: "))
@@ -33,52 +62,51 @@ def create_couriers(couriers):
       
     }
 
-    couriers.append(courier_append)
-    save_courier(couriers)
+    state["couriers"].append(courier_append)
     os.system("clear")
-    return couriers
+    return state
 
-def update_couriers(couriers):
-    view_couriers(couriers)
-    idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(couriers))
+def update_couriers(state):
+    view_couriers(state)
+    idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(state["couriers"]))
 
-    for key in couriers[idx].keys():
+    for key in state["couriers"][idx].keys():
         update = input(f"{key}: ")
         if update != "":
-                couriers[idx][key] = update
+                state["couriers"][idx][key] = update
             
-    save_courier(couriers)
+    
     os.system("clear")
-    return couriers
+    return state
 
-def delete_couriers(couriers):
-    view_couriers(couriers)
+def delete_couriers(state):
+    view_couriers(state)
     idx = int(input("Select: "))
-    couriers.pop(idx)
-    save_courier(couriers)
+    state["couriers"].pop(idx)
+    
     os.system("clear")
-    return couriers
+    return state
 
 
-def courier_menu(courier_data):
+def courier_menu(state):
     
     while True:
         
         option2 = pyip.inputNum(couriermenu, min = 0, max = 4)
 
         if option2 == 0:
-            save_courier(courier_data)
+            save_state(state)
             break
 
         elif option2 == 1:
-            view_couriers(courier_data)
+            view_couriers(state)
 
         elif option2 == 2:
-            create_couriers(courier_data)
+            create_couriers(state)
             
         elif option2 == 3:
-            update_couriers(courier_data)
+            update_couriers(state)
             
         elif  option2 == 4:
-            delete_couriers(courier_data)
+            delete_couriers(state)
 

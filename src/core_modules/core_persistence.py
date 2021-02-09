@@ -10,7 +10,6 @@ def read_csv(filename):
         for line in reader:
             data.append(line)
     return data
-
     
 def write_csv(data: list, filename):
     with open(filename, mode="w", newline="\n") as sf:
@@ -18,14 +17,16 @@ def write_csv(data: list, filename):
         writer.writeheader()
         for row in data:
             writer.writerow(row)
-
-def save_order(data):
-    write_csv(data, "./data/orders.csv")
-
-def save_product(data):
-    write_csv(data, "./data/products.csv" )
+ 
+ 
+def save_state(data):
+    write_csv(data["couriers"], "./data/courier.csv" )
+    write_csv(data["products"], "./data/products.csv")
+    write_csv(data["orders"], "./data/orders.csv")
     
-def save_courier(data):
-    write_csv(data, "./data/courier.csv" )
-    
-    
+def load_state():
+    state = {}
+    state["products"] = read_csv('./data/products.csv')
+    state["couriers"] = read_csv('./data/courier.csv')
+    state["orders"] = read_csv('./data/orders.csv')
+    return state 

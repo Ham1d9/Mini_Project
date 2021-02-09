@@ -2,7 +2,7 @@ import csv
 import os
 import tabulate
 import pyinputplus as pyip
-from src.core_modules.core_persistence import save_order
+from src.core_modules.core_persistence import save_state
 from src.core_modules.core_courier import view_couriers
 from src.core_modules.core_product import view_products
 
@@ -22,25 +22,25 @@ Slecet a Number for your Chosen Option
 status_options = ["preparing", "delayed", "done"]
 
 
-def view_orders(orders):
+def view_orders(state):
     os.system("clear")
-    print(tabulate.tabulate(orders, headers="keys", tablefmt ="fancy_grid", showindex=True))
+    print(tabulate.tabulate(state["orders"], headers="keys", tablefmt ="fancy_grid", showindex=True))
 
-def update_status(orders,status_options):
-    view_orders(orders)
-    select_idx = pyip.inputNum("Select a order number: ", min = 0, max = len(orders))
-    orders[select_idx]["status"] = pyip.inputMenu(status_options, numbered=True)
+def update_status(state,status_options):
+    view_orders(state)
+    select_idx = pyip.inputNum("Select a order number: ", min = 0, max = len(state["orders"]))
+    state["orders"][select_idx]["status"] = pyip.inputMenu(status_options, numbered=True)
     os.system("clear")
-    return orders
+    return state
 
-def create_orders(orders,couriers,products):
+def create_orders(state):
     os.system("clear")
     name = str(input("Name: "))
     address = str(input("Address: "))
     phone = str(input("phone: "))
-    view_couriers(couriers)
-    courier = pyip.inputNum("Select a courier number: ", min = 0, max = len(couriers))
-    view_products(products)
+    view_couriers(state)
+    courier = pyip.inputNum("Select a courier number: ", min = 0, max = len(state["couriers"]))
+    view_products(state)
     items = str(input("Select the items for order separate by comma: "))
     
     order_append = {
@@ -52,80 +52,79 @@ def create_orders(orders,couriers,products):
         "items": [items]
     }
 
-    orders.append(order_append)
-    save_order(orders)
+    state["orders"].append(order_append)
+    
     os.system("clear")
-    return orders
+    return state
 
 
-def update_orders(orders,couriers,products,status_options):
+def update_orders(state,status_options):
     os.system("clear")
-    view_orders(orders)
-    idx = pyip.inputNum("please select a order to update: ", min = 0, max =len(orders))
+    view_orders(state)
+    idx = pyip.inputNum("please select a order to update: ", min = 0, max =len(state["orders"]))
 
-    for key in orders[idx].keys():
+    for key in state["orders"][idx].keys():
         
         if key == "courier":
-            view_couriers(couriers)
-            update = pyip.inputNum("select a courier no seprated by commas: ",blank=True, min=0, max=len(couriers))
+            view_couriers(state)
+            update = pyip.inputNum("select a courier no seprated by commas: ",blank=True, min=0, max=len(state["couriers"]))
             if update != "":
-                orders[idx][key] = update
+                state["orders"][idx][key] = update
 
         elif key == "items":
-            view_products(products)
+            view_products(state)
             update = str(input("Select the items for the order separate by comma: "))
             if update != "":
-                orders[idx][key] = [update]
+                state["orders"][idx][key] = [update]
         
         elif key == "status":
-            view_orders(orders)
+            view_orders(state)
             status_prompt= "select one of the option to update status: "
             update = pyip.inputMenu(status_options,prompt=status_prompt, blank=True, numbered=True)
             if update != "":
-                orders[idx][key] = update
+                state["orders"][idx][key] = update
                 
         elif key == "customer_address" or "key == customer_name" or "customer_phone":
             update = input(f"write the new {key}: ")
             if update != "":
-                orders[idx][key] = update
+                state["orders"][idx][key] = update
                 
-    save_order(orders)
     os.system("clear")
-    return orders
+    return state
 
 
-def delete_orders(orders):
-    view_orders(orders)
+def delete_orders(state):
+    view_orders(state)
     idx = int(input("Select: "))
-    orders.pop(idx)
-    save_order(orders)
+    state["orders"].pop(idx)
     os.system("clear")
-    return orders
+    return state
 
 
-def order_sub_menu(order_data,couriers,products):
+def order_sub_menu(state):
     
     while True:
         
         option = pyip.inputNum(order_menu, min = 0, max = 5)
 
         if option == 0:
+            save_state(state)
             break
 
         elif option == 1:
-            view_orders(order_data)
+            view_orders(state)
 
         elif option == 2:
-            create_orders(order_data,couriers,products)
+            create_orders(state)
             
         elif option == 3:
-            update_status(order_data,status_options)
+            update_status(state,status_options)
             
         elif option == 4:
-            update_orders(order_data,couriers,products,status_options)
+            update_orders(state,status_options)
            
         elif  option == 5:
-            delete_orders(order_data)
+            delete_orders(state)
          
 
 

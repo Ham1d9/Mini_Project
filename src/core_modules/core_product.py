@@ -1,7 +1,7 @@
 import pyinputplus as pyip
 import os
 import tabulate
-from src.core_modules.core_persistence import save_product
+from src.core_modules.core_persistence import save_state
 
 
 productmenu = """
@@ -17,11 +17,11 @@ Slecet a Number for your Chosen Option
 [0]  Return to Main Menu
 """
 
-def view_products(products):
+def view_products(state):
     os.system("clear")
-    print(tabulate.tabulate(products, headers="keys", tablefmt ="fancy_grid", showindex=True))
+    print(tabulate.tabulate(state["products"], headers="keys", tablefmt ="fancy_grid", showindex=True))
     
-def create_products(products):
+def create_products(state):
     os.system("clear")
     name = str(input("name: "))
     while True:
@@ -37,55 +37,54 @@ def create_products(products):
         "price": price,
       
     }
+    state["products"].append(product_append)
+    os.system("clear")
+    return state
 
-    products.append(product_append)
-    save_product(products)
-    return products
+def update_products(state):
+    view_products(state)
+    idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(state["products"]))
 
-def update_products(products):
-    view_products(products)
-    idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(products))
-
-    for key in products[idx].keys():
+    for key in state["products"][idx].keys():
         update = input(f"{key}: ")
         if update != "":
             if key ==  "price":
-                products[idx][key] = float(update)
+                state["products"][idx][key] = float(update)
             else:
-                products[idx][key] = update
+                state["products"][idx][key] = update
+                
+    os.system("clear")            
+    return state
 
-    save_product(products)
-    return products
-
-def delete_products(products):
-    view_products(products)
+def delete_products(state):
+    view_products(state)
     idx = int(input("Select: "))
-    products.pop(idx)
-    save_product(products)
-    
-    return products
+    state["products"].pop(idx)
+    os.system("clear")
+    return state
 
 
-def product_menu(products_data):
+def product_menu(state):
     
     while True:
         
         option2 = pyip.inputNum(productmenu, min = 0, max = 4)
 
         if option2 == 0:
+            save_state(state)
             break
 
         elif option2 == 1:
-            view_products(products_data)
+            view_products(state)
 
         elif option2 == 2:
-            create_products(products_data)
+            create_products(state)
             
         elif option2 == 3:
-            update_products(products_data)
+            update_products(state)
             
         elif  option2 == 4:
-            delete_products(products_data)
+            delete_products(state)
 
 
 
