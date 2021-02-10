@@ -2,6 +2,7 @@ import pyinputplus as pyip
 import os
 import tabulate
 from src.core_modules.core_persistence import save_state
+from src.core_modules.db import query, update
 
 
 productmenu = """
@@ -17,11 +18,24 @@ Slecet a Number for your Chosen Option
 [0]  Return to Main Menu
 """
 
+sel_all_products = "select * from product"
+insert_new = "INSERT INTO product (name, price) VALUES ( %s, %s)"
+
+def parse_product(raw):
+    return{"id":raw[0],"name":raw[1],"price":raw[2]}
+
+
+def fetch_products(conn):
+    products = query(conn,sel_all_products)
+    return [parse_product(p) for p in products]
+    
+
 def view_products(state):
     os.system("clear")
     print(tabulate.tabulate(state["products"], headers="keys", tablefmt ="fancy_grid", showindex=True))
     
-def create_products(state):
+    
+def create_products(state,conn):
     os.system("clear")
     name = str(input("name: "))
     while True:
@@ -31,14 +45,18 @@ def create_products(state):
         except ValueError:
             print("Only numbers are allowed")
 
-
     product_append = {
         "name": name,
         "price": price,
       
     }
-    state["products"].append(product_append)
-    os.system("clear")
+    try: 
+        update(conn, insert_new, product_append.values())
+        state["products"].append(product_append)
+    except: 
+        os.system("clear")
+        print("there is a problem with creating new product")
+    
     return state
 
 def update_products(state):
@@ -64,7 +82,7 @@ def delete_products(state):
     return state
 
 
-def product_menu(state):
+def product_menu(state,conn):
     
     while True:
         
@@ -78,7 +96,7 @@ def product_menu(state):
             view_products(state)
 
         elif option2 == 2:
-            create_products(state)
+            create_products(state,conn)
             
         elif option2 == 3:
             update_products(state)

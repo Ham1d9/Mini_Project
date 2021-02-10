@@ -21,8 +21,8 @@ def query(conn, sql):
         return result
 
 def update(conn, sql, values):
-    with conm.cursor() as cursor:
-          cursor.execute(sql,values)
-          cursor.commit()
+    with conn.cursor() as cursor:
+          cursor.execute(sql,tuple(values))
+          conn.commit()
           
           

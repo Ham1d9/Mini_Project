@@ -1,6 +1,5 @@
 import csv 
 
-
 # for dic use below ones 
 
 def read_csv(filename):
@@ -24,9 +23,10 @@ def save_state(data):
     write_csv(data["products"], "./data/products.csv")
     write_csv(data["orders"], "./data/orders.csv")
     
-def load_state():
+def load_state(conn,fetch_couriers,fetch_products):
     state = {}
-    state["products"] = read_csv('./data/products.csv')
-    state["couriers"] = read_csv('./data/courier.csv')
+    state["products"] = fetch_products(conn)
+    state["couriers"] = fetch_couriers(conn)
     state["orders"] = read_csv('./data/orders.csv')
     return state 
+

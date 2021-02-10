@@ -2,7 +2,7 @@ import os
 import tabulate
 import pyinputplus as pyip
 from src.core_modules.core_persistence import save_state
-from src.core_modules.db import query, connection
+from src.core_modules.db import query, connection, update
 
 couriermenu = """
 Slecet a Number for your Chosen Option 
@@ -17,54 +17,44 @@ Slecet a Number for your Chosen Option
 [0]  Return to Main Menu
 """
 
-# conn = connection()
-# sel_all_courier = "select * from courier"
-# couriers = query(conn,sel_all_courier)
+sel_all_courier = "select * from courier"
+insert_new = "INSERT INTO courier (name, phone_number) VALUES ( %s, %s)"
 
-# print(couriers)
 
-# def parse_courier(raw):
-    
-#     return{
-#         "id":raw[0],
-#         "name":raw[1],
-#         "phone":raw[2]
-#          }
+def parse_courier(raw):
+    return{"id":raw[0],"name":raw[1],"phone":raw[2]}
 
-# def parse_couriers(couriers):
-#     c = []
-#     for courier in couriers:
-#         parsed = parse_courier(courier)
-#         c.append(parsed)
-#     return c
-    
-# final_c = parse_couriers(couriers)
-# print(final_c)
 
-# def update_couriers_sql():
+def fetch_couriers(conn):
+    couriers = query(conn,sel_all_courier)
+    return [parse_courier(c) for c in couriers]
     
     
-
 
 def view_couriers(state):
     os.system("clear")
     print(tabulate.tabulate(state["couriers"], headers="keys", tablefmt ="fancy_grid", showindex=True))
     
-def create_couriers(state):
+    
+def create_couriers(state,conn):
     os.system("clear")
     name = str(input("name: "))
     phone = str(input("phone: "))
 
-
     courier_append = {
         "name": name,
-        "phone": phone,
-      
-    }
-
-    state["couriers"].append(courier_append)
-    os.system("clear")
+        "phone": phone, 
+        }
+    
+    try:
+        update(conn, insert_new, courier_append.values())
+        state["couriers"].append(courier_append)
+    except:
+        os.system("clear")
+        print("there is problem appending")
+    
     return state
+
 
 def update_couriers(state):
     view_couriers(state)
@@ -75,7 +65,6 @@ def update_couriers(state):
         if update != "":
                 state["couriers"][idx][key] = update
             
-    
     os.system("clear")
     return state
 
@@ -88,7 +77,7 @@ def delete_couriers(state):
     return state
 
 
-def courier_menu(state):
+def courier_menu(state,conn):
     
     while True:
         
@@ -102,7 +91,7 @@ def courier_menu(state):
             view_couriers(state)
 
         elif option2 == 2:
-            create_couriers(state)
+            create_couriers(state,conn)
             
         elif option2 == 3:
             update_couriers(state)
