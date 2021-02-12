@@ -1,5 +1,4 @@
 pyinputplus
 tabulate
-pymysql
+pymysql[rsa]
 python-dotenv
-cryptography

@@ -2,7 +2,7 @@ import os
 import tabulate
 import pyinputplus as pyip
 from src.core_modules.core_persistence import save_state
-from src.core_modules.db import query, connection, update
+from src.core_modules.db import query, add
 
 couriermenu = """
 Slecet a Number for your Chosen Option 
@@ -47,7 +47,7 @@ def create_couriers(state,conn):
         }
     
     try:
-        update(conn, insert_new, courier_append.values())
+        add(conn, insert_new, courier_append.values())
         state["couriers"].append(courier_append)
     except:
         os.system("clear")

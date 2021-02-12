@@ -2,8 +2,8 @@ import pyinputplus as pyip
 import os
 import tabulate
 from src.core_modules.core_persistence import save_state
-from src.core_modules.db import query, update
-
+from src.core_modules.db import query, add
+from src.core_modules.core_persistence import load_state
 
 productmenu = """
 Slecet a Number for your Chosen Option 
@@ -20,6 +20,8 @@ Slecet a Number for your Chosen Option
 
 sel_all_products = "select * from product"
 insert_new = "INSERT INTO product (name, price) VALUES ( %s, %s)"
+
+update_new = "UPDATE product SET name = %s, price = %s WHERE ID = %s"
 
 def parse_product(raw):
     return{"id":raw[0],"name":raw[1],"price":raw[2]}
@@ -47,17 +49,20 @@ def create_products(state,conn):
 
     product_append = {
         "name": name,
-        "price": price,
+        "price": price
       
     }
+    print(product_append.values())
     try: 
-        update(conn, insert_new, product_append.values())
+        add(conn, insert_new, product_append.values())
         state["products"].append(product_append)
-    except: 
-        os.system("clear")
+    except:
+    # os.system("clear")
         print("there is a problem with creating new product")
     
+    # load_state(conn,)
     return state
+
 
 def update_products(state):
     view_products(state)

@@ -20,9 +20,18 @@ def query(conn, sql):
         result = cursor.fetchall()
         return result
 
-def update(conn, sql, values):
+def add(conn, sql, values):
     with conn.cursor() as cursor:
-          cursor.execute(sql,tuple(values))
+          cursor.execute(sql,values)
           conn.commit()
           
           
+
+# def update(conn,sql,vlaues
+
+def load_state(conn,fetch_couriers,fetch_products):
+    state = {}
+    state["products"] = fetch_products(conn)
+    state["couriers"] = fetch_couriers(conn)
+    state["orders"] = read_csv('./data/orders.csv')
+    return state 
