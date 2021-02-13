@@ -1,6 +1,7 @@
 import os
 import pymysql.cursors
 from dotenv import load_dotenv
+from src.core_modules.core_persistence import read_csv
 
 load_dotenv()
 
@@ -13,6 +14,8 @@ PORT = int(os.environ.get("PORT"))
 
 def connection():
     return pymysql.connect(host=HOST, user=USER, password=PASSWORD, db=DB, port=PORT)
+conn = connection()
+
 
 def query(conn, sql):
     with conn.cursor() as cursor:
@@ -22,16 +25,12 @@ def query(conn, sql):
 
 def add(conn, sql, values):
     with conn.cursor() as cursor:
-          cursor.execute(sql,values)
+          cursor.execute(sql,tuple(values))
           conn.commit()
-          
-          
 
-# def update(conn,sql,vlaues
 
-def load_state(conn,fetch_couriers,fetch_products):
-    state = {}
-    state["products"] = fetch_products(conn)
-    state["couriers"] = fetch_couriers(conn)
-    state["orders"] = read_csv('./data/orders.csv')
-    return state 
+
+
+
+
+

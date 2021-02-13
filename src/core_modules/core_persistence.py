@@ -25,8 +25,8 @@ def save_state(data):
     
 def load_state(conn,fetch_couriers,fetch_products):
     state = {}
-    state["products"] = fetch_products(conn)
-    state["couriers"] = fetch_couriers(conn)
+    state["products"] = fetch_products()
+    state["couriers"] = fetch_couriers()
     state["orders"] = read_csv('./data/orders.csv')
     return state 
 

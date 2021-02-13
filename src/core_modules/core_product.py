@@ -1,9 +1,9 @@
 import pyinputplus as pyip
 import os
 import tabulate
-from src.core_modules.core_persistence import save_state
-from src.core_modules.db import query, add
-from src.core_modules.core_persistence import load_state
+from src.core_modules.core_persistence import save_state, load_state
+from src.core_modules.core_db import query, add, conn
+
 
 productmenu = """
 Slecet a Number for your Chosen Option 
@@ -20,24 +20,25 @@ Slecet a Number for your Chosen Option
 
 sel_all_products = "select * from product"
 insert_new = "INSERT INTO product (name, price) VALUES ( %s, %s)"
-
 update_new = "UPDATE product SET name = %s, price = %s WHERE ID = %s"
 
-def parse_product(raw):
-    return{"id":raw[0],"name":raw[1],"price":raw[2]}
 
-
-def fetch_products(conn):
-    products = query(conn,sel_all_products)
-    return [parse_product(p) for p in products]
+def fetch_products():
+    products = []
+    product = query(conn,sel_all_products)
+    for raw in product:
+        products.append({"id":raw[0],"name":raw[1],"price":raw[2]})
+    return products
+    # return [parse_product(p) for p in products]
     
 
 def view_products(state):
     os.system("clear")
+    
     print(tabulate.tabulate(state["products"], headers="keys", tablefmt ="fancy_grid", showindex=True))
     
     
-def create_products(state,conn):
+def create_products(state):
     os.system("clear")
     name = str(input("name: "))
     while True:
@@ -60,8 +61,8 @@ def create_products(state,conn):
     # os.system("clear")
         print("there is a problem with creating new product")
     
-    # load_state(conn,)
     return state
+
 
 
 def update_products(state):
@@ -87,10 +88,11 @@ def delete_products(state):
     return state
 
 
-def product_menu(state,conn):
+def product_menu(state):
     
     while True:
         
+        state["products"] = fetch_products()
         option2 = pyip.inputNum(productmenu, min = 0, max = 4)
 
         if option2 == 0:
@@ -101,7 +103,7 @@ def product_menu(state,conn):
             view_products(state)
 
         elif option2 == 2:
-            create_products(state,conn)
+            create_products(state)
             
         elif option2 == 3:
             update_products(state)
