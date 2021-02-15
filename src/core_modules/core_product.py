@@ -19,23 +19,25 @@ Slecet a Number for your Chosen Option
 """
 
 sel_all_products = "select * from product"
-insert_new = "INSERT INTO product (name, price) VALUES ( %s, %s)"
-update_new = "UPDATE product SET name = %s, price = %s WHERE ID = %s"
-
+insert_new = "INSERT INTO product (name,quantity, price) VALUES ( %s, %s,%s)"
+update_new = "UPDATE product SET name = %s, quantity= %s, price = %s WHERE ID = %s"
+delete_product = "DELETE from product WHERE id = %s"
 
 def fetch_products():
     products = []
     product = query(conn,sel_all_products)
     for raw in product:
-        products.append({"id":raw[0],"name":raw[1],"price":raw[2]})
+        products.append({"name":raw[1],"quantity":raw[2],"price":raw[3], "id":raw[0]})
     return products
-    # return [parse_product(p) for p in products]
+    
     
 
 def view_products(state):
     os.system("clear")
-    
-    print(tabulate.tabulate(state["products"], headers="keys", tablefmt ="fancy_grid", showindex=True))
+    print_products = []
+    for item in state["products"]:
+        print_products.append(dict(name =item["name"],quantity= item["quantity"],price=item["price"]))
+    print(tabulate.tabulate(print_products, headers="keys", tablefmt ="fancy_grid", showindex=True))
     
     
 def create_products(state):
@@ -47,18 +49,12 @@ def create_products(state):
             break
         except ValueError:
             print("Only numbers are allowed")
-
-    product_append = {
-        "name": name,
-        "price": price
-      
-    }
-    print(product_append.values())
+    quantity = pyip.inputNum("please select quantity  ", min = 0)
+    product_values = (name, quantity, price)
     try: 
-        add(conn, insert_new, product_append.values())
-        state["products"].append(product_append)
+        add(conn, insert_new, product_values)
+        os.system("clear")
     except:
-    # os.system("clear")
         print("there is a problem with creating new product")
     
     return state
@@ -70,20 +66,31 @@ def update_products(state):
     idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(state["products"]))
 
     for key in state["products"][idx].keys():
-        update = input(f"{key}: ")
-        if update != "":
-            if key ==  "price":
+        if key ==  "price":
+            update = input(f"{key}: ")
+            if update != "":
                 state["products"][idx][key] = float(update)
-            else:
+        elif key == "quantity":
+            update = input(f"{key}: ")
+            if update != "":
+                state["products"][idx][key] = int(update)
+        elif key == "name":
+            update = input(f"{key}: ")
+            if update != "":
                 state["products"][idx][key] = update
-                
-    os.system("clear")            
+    try:
+        add(conn, update_new, tuple(state["products"][idx].values()))
+        os.system("clear")   
+    except: 
+        print("something went wrong")            
     return state
 
 def delete_products(state):
     view_products(state)
     idx = int(input("Select: "))
-    state["products"].pop(idx)
+    x = state["products"][idx]["id"]
+    print(x)
+    add(conn, delete_product, x )
     os.system("clear")
     return state
 

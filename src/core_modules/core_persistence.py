@@ -23,7 +23,7 @@ def save_state(data):
     write_csv(data["products"], "./data/products.csv")
     write_csv(data["orders"], "./data/orders.csv")
     
-def load_state(conn,fetch_couriers,fetch_products):
+def load_state(fetch_couriers,fetch_products):
     state = {}
     state["products"] = fetch_products()
     state["couriers"] = fetch_couriers()

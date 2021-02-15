@@ -25,7 +25,7 @@ def query(conn, sql):
 
 def add(conn, sql, values):
     with conn.cursor() as cursor:
-          cursor.execute(sql,tuple(values))
+          cursor.execute(sql,values)
           conn.commit()
 
 

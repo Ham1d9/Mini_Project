@@ -19,21 +19,22 @@ Slecet a Number for your Chosen Option
 
 sel_all_courier = "select * from courier"
 insert_new = "INSERT INTO courier (name, phone_number) VALUES ( %s, %s)"
-
+update_new = "UPDATE courier SET name = %s, phone_number = %s WHERE ID = %s"
+delete_courier = "DELETE from courier WHERE id = %s"
 
 def fetch_couriers():
     couriers = []
     courier = query(conn, "select * from courier")
     for raw in courier:
-        couriers.append({"id":raw[0],"name":raw[1],"phone":raw[2]})
+        couriers.append({"id":raw[0],"name":raw[1],"phone_number":raw[2]})
     return couriers
-
-    
-    
 
 def view_couriers(state):
     os.system("clear")
-    print(tabulate.tabulate(state["couriers"], headers="keys", tablefmt ="fancy_grid", showindex=True))
+    print_courier = []
+    for item in state["couriers"]:
+        print_courier.append(dict(name =item["name"],price=item["phone_number"]))
+    print(tabulate.tabulate(print_courier, headers="keys", tablefmt ="fancy_grid", showindex=True))
     
     
 def create_couriers(state):
@@ -45,12 +46,9 @@ def create_couriers(state):
         "name": name,
         "phone": phone, 
         }
-    
     try:
-        add(conn, insert_new, courier_append.values())
-        state["couriers"].append(courier_append)
+        add(conn, insert_new, tuple(courier_append.values()))
     except:
-        
         print("there is problem appending")
     
     return state
@@ -64,7 +62,9 @@ def update_couriers(state):
         update = input(f"{key}: ")
         if update != "":
                 state["couriers"][idx][key] = update
-            
+                
+    add(conn, insert_new, tuple(courier_append.values()))
+        
     os.system("clear")
     return state
 
