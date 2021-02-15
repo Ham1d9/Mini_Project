@@ -26,7 +26,7 @@ def fetch_couriers():
     couriers = []
     courier = query(conn, "select * from courier")
     for raw in courier:
-        couriers.append({"id":raw[0],"name":raw[1],"phone_number":raw[2]})
+        couriers.append({"name":raw[1],"phone_number":raw[2],"id":raw[0]})
     return couriers
 
 def view_couriers(state):
@@ -56,23 +56,31 @@ def create_couriers(state):
 
 def update_couriers(state):
     view_couriers(state)
-    idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(state["couriers"]))
+    idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(state["couriers"])-1)
 
     for key in state["couriers"][idx].keys():
-        update = input(f"{key}: ")
-        if update != "":
+        if key ==  "name":
+            update = input(f"{key}: ")
+            if update != "":
                 state["couriers"][idx][key] = update
+        elif key == "phone_number":
+            update = input(f"{key}: ")
+            if update != "":
+                state["couriers"][idx][key] = int(update)
                 
-    add(conn, insert_new, tuple(courier_append.values()))
-        
-    os.system("clear")
+    try:
+        add(conn, update_new, tuple(state["couriers"][idx].values()))
+        os.system("clear")   
+    except: 
+        print("something went wrong")            
     return state
+    
 
 def delete_couriers(state):
     view_couriers(state)
     idx = int(input("Select: "))
-    state["couriers"].pop(idx)
-    
+    x = state["couriers"][idx]["id"]
+    add(conn, delete_courier, x)
     os.system("clear")
     return state
 

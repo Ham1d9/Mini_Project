@@ -63,7 +63,7 @@ def create_products(state):
 
 def update_products(state):
     view_products(state)
-    idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(state["products"]))
+    idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(state["products"])-1)
 
     for key in state["products"][idx].keys():
         if key ==  "price":
@@ -89,8 +89,7 @@ def delete_products(state):
     view_products(state)
     idx = int(input("Select: "))
     x = state["products"][idx]["id"]
-    print(x)
-    add(conn, delete_product, x )
+    add(conn, delete_product, x)
     os.system("clear")
     return state
 
