@@ -21,10 +21,29 @@ Slecet a Number for your Chosen Option
 """
 status_options = ["preparing", "delayed", "done"]
 
+sel_all_transaction = "select * from transaction"
+
+def fetch_transaction():
+    transaction = []
+    transactions = query(conn,sel_all_products)
+    for raw in transactions:
+        transaction.append({"status":raw[1],"customer_name":raw[2],"customer_address":raw[3],"customer_phone":raw[4],"courier_id":raw[5], "id":raw[0]})
+    return transaction
+
+
+def view_products(state):
+    os.system("clear")
+    print_products = []
+    for item in state["products"]:
+        print_products.append(dict(name =item["name"],quantity= item["quantity"],price=item["price"]))
+    print(tabulate.tabulate(print_products, headers="keys", tablefmt ="fancy_grid", showindex=True))
 
 def view_orders(state):
     os.system("clear")
-    print(tabulate.tabulate(state["orders"], headers="keys", tablefmt ="fancy_grid", showindex=True))
+    print_orders = []
+    for item in state["order"]:
+        print(tabulate.tabulate(state["orders"], headers="keys", tablefmt ="fancy_grid", showindex=True))
+       
 
 def update_status(state,status_options):
     view_orders(state)

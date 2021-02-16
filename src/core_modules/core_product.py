@@ -19,30 +19,28 @@ Slecet a Number for your Chosen Option
 """
 
 sel_all_products = "select * from product"
-insert_new = "INSERT INTO product (name,quantity, price) VALUES ( %s, %s,%s)"
-update_new = "UPDATE product SET name = %s, quantity= %s, price = %s WHERE ID = %s"
+insert_new = "INSERT INTO product (product_name,quantity, price) VALUES ( %s, %s,%s)"
+update_new = "UPDATE product SET product_name = %s, quantity= %s, price = %s WHERE ID = %s"
 delete_product = "DELETE from product WHERE id = %s"
 
 def fetch_products():
     products = []
     product = query(conn,sel_all_products)
     for raw in product:
-        products.append({"name":raw[1],"quantity":raw[2],"price":raw[3], "id":raw[0]})
+        products.append({"product_name":raw[1],"quantity":raw[2],"price":raw[3], "id":raw[0]})
     return products
     
-    
-
 def view_products(state):
     os.system("clear")
     print_products = []
     for item in state["products"]:
-        print_products.append(dict(name =item["name"],quantity= item["quantity"],price=item["price"]))
+        print_products.append(dict(product_name =item["product_name"],quantity= item["quantity"],price=item["price"]))
     print(tabulate.tabulate(print_products, headers="keys", tablefmt ="fancy_grid", showindex=True))
     
     
 def create_products(state):
     os.system("clear")
-    name = str(input("name: "))
+    name = str(input("product_name: "))
     while True:
         try: 
             price = float(input("price: "))
@@ -74,7 +72,7 @@ def update_products(state):
             update = input(f"{key}: ")
             if update != "":
                 state["products"][idx][key] = int(update)
-        elif key == "name":
+        elif key == "product_name":
             update = input(f"{key}: ")
             if update != "":
                 state["products"][idx][key] = update
@@ -84,6 +82,7 @@ def update_products(state):
     except: 
         print("something went wrong")            
     return state
+
 
 def delete_products(state):
     view_products(state)
