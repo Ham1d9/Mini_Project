@@ -17,9 +17,9 @@ def connection():
 conn = connection()
 
 
-def query(conn, sql):
+def query(conn, sql, values=None):
     with conn.cursor() as cursor:
-        cursor.execute(sql)
+        cursor.execute(sql,values)
         result = cursor.fetchall()
         return result
 

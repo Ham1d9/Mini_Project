@@ -18,22 +18,22 @@ Slecet a Number for your Chosen Option
 """
 
 sel_all_courier = "select * from courier"
-insert_new = "INSERT INTO courier (courier_name, phone_number) VALUES ( %s, %s)"
-update_new = "UPDATE courier SET courier_name = %s, phone_number = %s WHERE ID = %s"
+insert_new = "INSERT INTO courier (courier_name, courier_phone) VALUES ( %s, %s)"
+update_new = "UPDATE courier SET courier_name = %s, courier_phone = %s WHERE ID = %s"
 delete_courier = "DELETE from courier WHERE id = %s"
 
 def fetch_couriers():
     couriers = []
     courier = query(conn, "select * from courier")
     for raw in courier:
-        couriers.append({"courier_name":raw[1],"phone_number":raw[2],"id":raw[0]})
+        couriers.append({"courier_name":raw[1],"courier_phone":raw[2],"id":raw[0]})
     return couriers
 
 def view_couriers(state):
     os.system("clear")
     print_courier = []
     for item in state["couriers"]:
-        print_courier.append(dict(courier_name =item["courier_name"],price=item["phone_number"]))
+        print_courier.append(dict(courier_name =item["courier_name"],courier_phone=item["courier_phone"]))
     print(tabulate.tabulate(print_courier, headers="keys", tablefmt ="fancy_grid", showindex=True))
     
     
@@ -63,7 +63,7 @@ def update_couriers(state):
             update = input(f"{key}: ")
             if update != "":
                 state["couriers"][idx][key] = update
-        elif key == "phone_number":
+        elif key == "courier_phone":
             update = input(f"{key}: ")
             if update != "":
                 state["couriers"][idx][key] = int(update)

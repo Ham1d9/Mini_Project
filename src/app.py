@@ -2,12 +2,12 @@ import csv
 import os
 import pyinputplus as pyip
 from src.core_modules.core_product import product_menu, fetch_products
-from src.core_modules.core_orders import order_sub_menu
+from src.core_modules.core_orders import order_sub_menu, fetch_transaction
 from src.core_modules.core_courier import courier_menu, fetch_couriers 
 from src.core_modules.core_persistence import load_state
 
 
-state  = load_state(fetch_couriers,fetch_products)
+state  = load_state(fetch_couriers,fetch_products,fetch_transaction)
 
 
 

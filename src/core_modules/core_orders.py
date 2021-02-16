@@ -5,6 +5,7 @@ import pyinputplus as pyip
 from src.core_modules.core_persistence import save_state
 from src.core_modules.core_courier import view_couriers
 from src.core_modules.core_product import view_products
+from src.core_modules.core_db import query, add, conn
 
 order_menu = """
 Slecet a Number for your Chosen Option 
@@ -19,33 +20,44 @@ Slecet a Number for your Chosen Option
 --------------------------------------
 [0]  Return to Main Menu
 """
+top_part_print =  """
+---------------------------------------
+        Order Information 
+---------------------------------------
+
+Order: {}, {}, {}
+ 
+Order status: {}
+ 
+Courier_Name: {} Phone: {}
+"""
+toatl = """  Total\t\t      £{}"""
 status_options = ["preparing", "delayed", "done"]
 
-sel_all_transaction = "select * from transaction"
-
+sel_all_transaction = """select transaction.id,status,customer_name,customer_address,customer_phone, 
+courier_name,courier_phone from transaction join courier on courier.id = transaction.courier_id;"""
+sql_basket= """select product_name,price from basket join product on product.id = basket.product_id 
+        where transaction_id = %s """
+        
 def fetch_transaction():
     transaction = []
-    transactions = query(conn,sel_all_products)
+    transactions = query(conn,sel_all_transaction)
     for raw in transactions:
-        transaction.append({"status":raw[1],"customer_name":raw[2],"customer_address":raw[3],"customer_phone":raw[4],"courier_id":raw[5], "id":raw[0]})
+        transaction.append({"status":raw[1],"customer_name":raw[2],"customer_address":raw[3],"customer_phone":raw[4],"courier_name":raw[5],"courier_phone":raw[6],"id":raw[0]})
     return transaction
 
 
-def view_products(state):
-    os.system("clear")
-    print_products = []
-    for item in state["products"]:
-        print_products.append(dict(name =item["name"],quantity= item["quantity"],price=item["price"]))
-    print(tabulate.tabulate(print_products, headers="keys", tablefmt ="fancy_grid", showindex=True))
+
 
 def view_orders(state):
     os.system("clear")
     print_orders = []
-    for item in state["order"]:
-        print(tabulate.tabulate(state["orders"], headers="keys", tablefmt ="fancy_grid", showindex=True))
+    for order in state["orders"]:
+        print_orders.append(dict(status =order["status"],customer_name=order["customer_name"],customer_address=order["customer_address"],customer_phone=order["customer_phone"]))
+    print(tabulate.tabulate(print_orders, headers="keys", tablefmt ="fancy_grid", showindex=True))
        
 
-def update_status(state,status_options):
+def update_status(state):
     view_orders(state)
     select_idx = pyip.inputNum("Select a order number: ", min = 0, max = len(state["orders"]))
     state["orders"][select_idx]["status"] = pyip.inputMenu(status_options, numbered=True)
@@ -72,12 +84,11 @@ def create_orders(state):
     }
 
     state["orders"].append(order_append)
-    
     os.system("clear")
     return state
 
 
-def update_orders(state,status_options):
+def update_orders(state):
     os.system("clear")
     view_orders(state)
     idx = pyip.inputNum("please select a order to update: ", min = 0, max =len(state["orders"]))
@@ -120,6 +131,38 @@ def delete_orders(state):
     return state
 
 
+
+def print_sub_menu(state):
+    view_orders(state)
+    
+    while True:
+        
+        idx = pyip.inputNum("select a order to see more \n or press Enter to go back menu..... ",blank=True, min=0, max=len(state["orders"]))
+        os.system("clear")
+        
+        if idx == "":
+            os.system("clear")
+            break
+        
+        else:
+           
+            parsed_data = []
+            price_list = []
+            raw_data = query(conn,sql_basket, state["orders"][idx]["id"])
+            for raw in raw_data:
+                parsed_data.append({"product_name":raw[0],"price":raw[1]})
+                price_list.append(raw[1])
+                
+            print(top_part_print.format(state["orders"][idx]["customer_name"],state["orders"][idx]["customer_address"],\
+                state["orders"][idx]["customer_phone"],state["orders"][idx]["status"],state["orders"][idx]["courier_name"],\
+                    state["orders"][idx]["courier_phone"]))
+            print(tabulate.tabulate(parsed_data, headers="keys", tablefmt ="psql"))
+            print(toatl.format(sum(price_list)))
+            
+            input("press any key to go back......")
+            os.system("clear")
+            break
+        
 def order_sub_menu(state):
     
     while True:
@@ -131,16 +174,16 @@ def order_sub_menu(state):
             break
 
         elif option == 1:
-            view_orders(state)
+            print_sub_menu(state)
 
         elif option == 2:
             create_orders(state)
             
         elif option == 3:
-            update_status(state,status_options)
+            update_status(state)
             
         elif option == 4:
-            update_orders(state,status_options)
+            update_orders(state)
            
         elif  option == 5:
             delete_orders(state)
