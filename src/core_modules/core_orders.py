@@ -31,23 +31,26 @@ Order status: {}
  
 Courier_Name: {} Phone: {}
 """
-toatl = """  Total\t\t      £{}"""
+total = """  Total\t\t      £{}"""
 status_options = ["preparing", "delayed", "done"]
 
 sel_all_transaction = """select transaction.id,status,customer_name,customer_address,customer_phone, 
 courier_name,courier_phone from transaction join courier on courier.id = transaction.courier_id;"""
-sql_basket= """select product_name,price from basket join product on product.id = basket.product_id 
+
+sel_sql_basket= """select product_name,price from basket join product on product.id = basket.product_id 
         where transaction_id = %s """
         
+add_transaction = """INSERT INTO transaction (status, customer_name, customer_address,
+        customer_phone, courier_id) VALUES (%s, %s, %s, %s, %s)"""   
+        
+add_basket = "INSERT INTO basket (transaction_id, product_id) VALUES(%s, %s)"
+         
 def fetch_transaction():
     transaction = []
     transactions = query(conn,sel_all_transaction)
     for raw in transactions:
         transaction.append({"status":raw[1],"customer_name":raw[2],"customer_address":raw[3],"customer_phone":raw[4],"courier_name":raw[5],"courier_phone":raw[6],"id":raw[0]})
     return transaction
-
-
-
 
 def view_orders(state):
     os.system("clear")
@@ -70,21 +73,23 @@ def create_orders(state):
     address = str(input("Address: "))
     phone = str(input("phone: "))
     view_couriers(state)
-    courier = pyip.inputNum("Select a courier number: ", min = 0, max = len(state["couriers"]))
-    view_products(state)
-    items = str(input("Select the items for order separate by comma: "))
+    courier = pyip.inputNum("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
+    values_trans = ("preparing", name,address,phone,state["couriers"][courier]["id"])
+    add(conn,add_transaction,values_trans)
+    state["orders"] = fetch_transaction()
     
-    order_append = {
-        "customer_name": name,
-        "customer_address": address,
-        "customer_phone": phone,
-        "courier": courier,
-        "status": "preparing",
-        "items": [items]
-    }
-
-    state["orders"].append(order_append)
-    os.system("clear")
+    while True:
+        view_products(state)
+        ask = "select the product and press enter to add it \n or leave it blank to contine ,just press Enter to go back..... "
+        update_value = pyip.inputNum(ask, min = 0, max = len(state["products"])-1, blank=True)
+        if update_value == "":
+            break
+        else:
+            print(state["orders"][len(state["orders"])-1]["id"])
+            value_basket = (state["orders"][len(state["orders"])-1]["id"],state["products"][update_value]["id"])
+            add(conn,add_basket,value_basket)
+    
+    # os.system("clear")
     return state
 
 
@@ -148,7 +153,8 @@ def print_sub_menu(state):
            
             parsed_data = []
             price_list = []
-            raw_data = query(conn,sql_basket, state["orders"][idx]["id"])
+            raw_data = query(conn,sel_sql_basket, state["orders"][idx]["id"])
+            
             for raw in raw_data:
                 parsed_data.append({"product_name":raw[0],"price":raw[1]})
                 price_list.append(raw[1])
@@ -157,7 +163,7 @@ def print_sub_menu(state):
                 state["orders"][idx]["customer_phone"],state["orders"][idx]["status"],state["orders"][idx]["courier_name"],\
                     state["orders"][idx]["courier_phone"]))
             print(tabulate.tabulate(parsed_data, headers="keys", tablefmt ="psql"))
-            print(toatl.format(sum(price_list)))
+            print(total.format(sum(price_list)))
             
             input("press any key to go back......")
             os.system("clear")
@@ -166,7 +172,7 @@ def print_sub_menu(state):
 def order_sub_menu(state):
     
     while True:
-        
+        state["orders"] = fetch_transaction()
         option = pyip.inputNum(order_menu, min = 0, max = 5)
 
         if option == 0:
