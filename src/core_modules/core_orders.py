@@ -84,7 +84,7 @@ def create_orders(state):
     name = str(input("Name: "))
     address = str(input("Address: "))
     while True:
-        phone = str(input("phone: ")))
+        phone = str(input("phone: "))
         if len(phone)!= 11:
             print("wrong number of digits")
         elif len(phone)== 11:
