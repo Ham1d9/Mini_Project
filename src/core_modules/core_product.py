@@ -53,10 +53,8 @@ def create_products(state):
         add(conn, insert_new, product_values)
         os.system("clear")
     except:
-        print("there is a problem with creating new product")
-    
+        print("there is a problem with creating new product")  
     return state
-
 
 
 def update_products(state):
@@ -86,9 +84,9 @@ def update_products(state):
 
 def delete_products(state):
     view_products(state)
-    idx = int(input("Select: "))
-    x = state["products"][idx]["id"]
-    add(conn, delete_product, x)
+    idx = pyip.inputNum("please select a product to delete: ", min = 0, max =len(state["products"])-1)
+    if idx !="":
+        add(conn, delete_product, state["products"][idx]["id"])
     os.system("clear")
     return state
 

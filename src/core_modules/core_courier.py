@@ -16,7 +16,6 @@ Slecet a Number for your Chosen Option
 --------------------------------------
 [0]  Return to Main Menu
 """
-
 sel_all_courier = "select * from courier"
 insert_new = "INSERT INTO courier (courier_name, courier_phone) VALUES ( %s, %s)"
 update_new = "UPDATE courier SET courier_name = %s, courier_phone = %s WHERE ID = %s"
@@ -75,12 +74,11 @@ def update_couriers(state):
         print("something went wrong")            
     return state
     
-
 def delete_couriers(state):
     view_couriers(state)
-    idx = int(input("Select: "))
-    x = state["couriers"][idx]["id"]
-    add(conn, delete_courier, x)
+    idx = pyip.inputNum("please select a courier to delete: ", min = 0, max =len(state["couriers"])-1)
+    if idx !="":
+        add(conn, delete_courier, state["couriers"][idx]["id"])
     os.system("clear")
     return state
 

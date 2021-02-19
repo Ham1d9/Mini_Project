@@ -63,6 +63,7 @@ update_basket_quantity = "UPDATE basket set quantity = %s where transaction_id =
 
 delete_basket_product = "DELETE FROM basket WHERE id = %s"
 delte_transaction = "DELETE FROM transaction WHERE id =%s" 
+
 def fetch_transaction():
     transaction = []
     transactions = query(conn,sel_all_transaction)
@@ -121,7 +122,7 @@ def update_orders(state):
         
         if key == "courier_id":
             view_couriers(state)
-            update = pyip.inputNum("\nselect a courier\n or leave it blank to skip,just press Enter to continue.... : ",blank=True, min=0, max=len(state["couriers"])-1)
+            update = pyip.inputNum("\nselect a new courier\n or leave it blank to skip,just press Enter to continue.... : ",blank=True, min=0, max=len(state["couriers"])-1)
             if update != "":
                 state["orders"][idx][key] = state["couriers"][update]["id"]
                
@@ -198,20 +199,17 @@ def update_orders(state):
 def delete_orders(state):
     view_orders(state)
     idx = pyip.inputNum("please select a order to delete\n or leave it blank to skip, press Enter to go back...",blank=True, min = 0, max =len(state["orders"])-1)
-    
     if idx !="":
         add(conn, delte_transaction,state["orders"][idx]["id"])
     os.system("clear")
-    
     return state
 
 
 
 def print_sub_menu(state):
-    view_orders(state)
     
     while True:
-        
+        view_orders(state)
         idx = pyip.inputNum("select a order to see more \n or press Enter to go back menu..... ",blank=True, min=0, max=len(state["orders"]))
         os.system("clear")
         
@@ -227,7 +225,7 @@ def print_sub_menu(state):
             
             for raw in raw_data:
                 parsed_data.append({"product_name":raw[0],"quantity":raw[2],"price":raw[1]})
-                price_list.append(raw[1])
+                price_list.append(raw[1]*raw[2])
                 
             print(top_part_print.format(state["orders"][idx]["customer_name"],state["orders"][idx]["customer_address"],\
                 state["orders"][idx]["customer_phone"],state["orders"][idx]["status"],state["orders"][idx]["courier_name"],\
@@ -235,9 +233,9 @@ def print_sub_menu(state):
             print(tabulate.tabulate(parsed_data, headers="keys", tablefmt ="psql"))
             print(total.format(sum(price_list)))
             
-            input("press any key to go back......")
+            input("\npress any key to go back......")
             os.system("clear")
-            break
+            
         
 def order_sub_menu(state):
     
