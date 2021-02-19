@@ -83,7 +83,12 @@ def create_orders(state):
     os.system("clear")
     name = str(input("Name: "))
     address = str(input("Address: "))
-    phone = str(input("phone: "))
+    while True:
+        phone = str(input("phone: ")))
+        if len(phone)!= 11:
+            print("wrong number of digits")
+        elif len(phone)== 11:
+            break
     view_couriers(state)
     courier = pyip.inputNum("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
     values_trans = ("preparing", name,address,phone,state["couriers"][courier]["id"])
