@@ -13,7 +13,7 @@ state  = load_state(fetch_couriers,fetch_products,fetch_transaction)
 
 MainMenu = """
 
-Slecet a Number foryour Chosen Option 
+Select a Number foryour chosen Option 
 --------------------------------------
     Main Menu 
 --------------------------------------
@@ -29,7 +29,7 @@ Slecet a Number foryour Chosen Option
 
 while True:
     os.system("clear")
-    option = pyip.inputNum(MainMenu, min = 0, max = 3 )
+    option = pyip.inputInt(MainMenu, min = 0, max = 3 )
     
     if option == 0:
         os.system("clear")

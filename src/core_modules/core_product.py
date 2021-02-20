@@ -6,7 +6,7 @@ from src.core_modules.core_db import query, add, conn
 
 
 productmenu = """
-Slecet a Number for your Chosen Option 
+Select a Number for your chosen Option 
 --------------------------------------
      Product Menu
 --------------------------------------
@@ -14,7 +14,7 @@ Slecet a Number for your Chosen Option
 [2]  Create a new Products 
 [3]  Update a Product 
 [4]  Delete a Product 
----------------------------------------
+--------------------------------------
 [0]  Return to Main Menu
 """
 
@@ -44,7 +44,7 @@ def create_products(state):
     name = pyip.inputStr("Enter the product: ")
     price = pyip.inputFloat("Enter the new price: ")
     
-    quantity = pyip.inputInt("please select quantity  ", min = 1)
+    quantity = pyip.inputInt("please select quantity: ", min = 1)
     product_values = (name, quantity, price)
     try: 
         add(conn, insert_new, product_values)

@@ -5,7 +5,7 @@ from src.core_modules.core_persistence import save_state
 from src.core_modules.core_db import query, add, conn
 
 couriermenu = """
-Slecet a Number for your Chosen Option 
+Select a Number for your chosen Option 
 --------------------------------------
      Courier Menu
 --------------------------------------
@@ -41,16 +41,12 @@ def create_couriers(state):
     name = str(input("write courier name: "))
     
     while True:
-            phone = str(input("write phone: "))
+            phone = pyip.inputStr("write phone: ")
             if len(phone)!= 11:
                 print("wrong number of digits")
             elif len(phone)== 11:
                 break
 
-    # courier_append = {
-    #     "name": name,
-    #     "phone": phone, 
-    #     } tuple(courier_append.values())
     try:
         add(conn, insert_new, (name, phone))
     except:
@@ -61,7 +57,7 @@ def create_couriers(state):
 
 def update_couriers(state):
     view_couriers(state)
-    idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(state["couriers"])-1)
+    idx = pyip.inputInt("please select a courier to update: ", min = 0, max =len(state["couriers"])-1)
 
     for key in state["couriers"][idx].keys():
         
@@ -72,7 +68,7 @@ def update_couriers(state):
         
         elif key == "courier_phone":
             while True:
-                update = pyip.inputInt(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue.....", blank=True)
+                update = pyip.inputStr(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue.....", blank=True)
 
                 if update !="" and len(update)== 11:
                     state["couriers"][idx][key] = update
@@ -93,7 +89,7 @@ def update_couriers(state):
     
 def delete_couriers(state):
     view_couriers(state)
-    idx = pyip.inputNum("please select a courier to delete: ", min = 0, max =len(state["couriers"])-1,blank=True)
+    idx = pyip.inputInt("please select a courier to delete: ", min = 0, max =len(state["couriers"])-1,blank=True)
     if idx !="":
         add(conn, delete_courier, state["couriers"][idx]["id"])
     os.system("clear")
@@ -104,7 +100,7 @@ def courier_menu(state):
     
     while True:
         state["couriers"] = fetch_couriers()
-        option2 = pyip.inputNum(couriermenu, min = 0, max = 4)
+        option2 = pyip.inputInt(couriermenu, min = 0, max = 4)
 
         if option2 == 0:
             save_state(state)

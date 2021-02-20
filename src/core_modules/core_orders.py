@@ -8,7 +8,7 @@ from src.core_modules.core_product import view_products
 from src.core_modules.core_db import query, add, conn
 
 order_menu = """
-Slecet a Number for your Chosen Option 
+Select a Number for your chosen Option 
 --------------------------------------
      Order Menu
 --------------------------------------
@@ -81,16 +81,16 @@ def view_orders(state):
 
 def create_orders(state):
     os.system("clear")
-    name = str(input("Name: "))
-    address = str(input("Address: "))
+    name = str(input("Write new name: "))
+    address = str(input("write new address: "))
     while True:
-        phone = str(input("phone: "))
+        phone = pyip.inputStr("write new phone: ")
         if len(phone)!= 11:
             print("wrong number of digits")
         elif len(phone)== 11:
             break
     view_couriers(state)
-    courier = pyip.inputNum("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
+    courier = pyip.inputInt("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
     values_trans = ("preparing", name,address,phone,state["couriers"][courier]["id"])
     add(conn,add_transaction,values_trans)
     state["orders"] = fetch_transaction()
@@ -98,11 +98,11 @@ def create_orders(state):
     while True:
         view_products(state)
         ask = "select the product and press enter to add it \n or leave it blank to contine ,just press Enter to go back.....  "
-        update_value = pyip.inputNum(ask, min = 0, max = len(state["products"])-1, blank=True)
+        update_value = pyip.inputInt(ask, min = 0, max = len(state["products"])-1, blank=True)
         if update_value == "":
             break
         else:
-            quantity_value = pyip.inputNum("\nselect a quantity: ", min = 1)
+            quantity_value = pyip.inputInt("\nselect a quantity: ", min = 1)
             value_basket = (state["orders"][len(state["orders"])-1]["id"],state["products"][update_value]["id"],quantity_value)
             add(conn,add_basket,value_basket)
     
@@ -127,7 +127,7 @@ def update_orders(state):
         
         if key == "courier_id":
             view_couriers(state)
-            update = pyip.inputNum("\nselect a new courier\n or leave it blank to skip,just press Enter to continue.... : ",blank=True, min=0, max=len(state["couriers"])-1)
+            update = pyip.inputInt("\nselect a new courier\n or leave it blank to skip,just press Enter to continue.... : ",blank=True, min=0, max=len(state["couriers"])-1)
             if update != "":
                 state["orders"][idx][key] = state["couriers"][update]["id"]
                
@@ -145,7 +145,7 @@ def update_orders(state):
                 
         elif key == "customer_phone":
             while True:
-                update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
+                update = pyip.inputStr(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ",blank=True)
 
                 if update != "" and len(update)== 11:
                     state["orders"][idx][key] = update
@@ -185,7 +185,7 @@ def update_orders(state):
         os.system("clear")
         basket_data = refresh()
         basket_print(basket_data)
-        idx_basket = pyip.inputNum("please select a product to update\n or leave it blank to skip ,just press Enter to continue.....  ",blank=True, min = 0, max =len(basket_data)-1)
+        idx_basket = pyip.inputInt("please select a product to update\n or leave it blank to skip ,just press Enter to continue.....  ",blank=True, min = 0, max =len(basket_data)-1)
         
         if idx_basket == "":
             break
@@ -193,19 +193,19 @@ def update_orders(state):
         else:
             os.system("clear")
             basket_print_idx(basket_data,idx_basket)
-            option_update =  pyip.inputNum(basket_item_update, min = 0, max =3)
+            option_update =  pyip.inputInt(basket_item_update, min = 0, max =3)
             
             if option_update == 0:
                 pass
             elif option_update == 1:
                 view_products(state)
                 ask_new_product = "select a new product: "
-                update_product_idx = pyip.inputNum(ask_new_product, min = 0, max = len(state["products"])-1, blank=True)
+                update_product_idx = pyip.inputInt(ask_new_product, min = 0, max = len(state["products"])-1, blank=True)
                 update_product_value = (state["products"][update_product_idx]["id"],state["orders"][idx]["id"],basket_data[idx_basket]["id"])
                 add(conn,update_basket_product,update_product_value)
                
             elif option_update == 2:
-                ask_new_quantity = pyip.inputNum("select a new quantity: ", min = 0)
+                ask_new_quantity = pyip.inputInt("select a new quantity: ", min = 1)
                 update_quantity_value = (ask_new_quantity,state["orders"][idx]["id"],basket_data[idx_basket]["id"])
                 add(conn,update_basket_quantity,update_quantity_value)
             
@@ -217,7 +217,7 @@ def update_orders(state):
 
 def delete_orders(state):
     view_orders(state)
-    idx = pyip.inputNum("please select a order to delete\n or leave it blank to skip, press Enter to go back...",blank=True, min = 0, max =len(state["orders"])-1)
+    idx = pyip.inputInt("please select a order to delete\n or leave it blank to skip, press Enter to go back...",blank=True, min = 0, max =len(state["orders"])-1)
     if idx !="":
         add(conn, delte_transaction,state["orders"][idx]["id"])
     os.system("clear")
@@ -229,7 +229,7 @@ def print_sub_menu(state):
     
     while True:
         view_orders(state)
-        idx = pyip.inputNum("select a order to see more \n or press Enter to go back menu..... ",blank=True, min=0, max=len(state["orders"]))
+        idx = pyip.inputInt("select a order to see more \n or press Enter to go back menu..... ",blank=True, min=0, max=len(state["orders"]))
         os.system("clear")
         
         if idx == "":
@@ -260,7 +260,7 @@ def order_sub_menu(state):
     
     while True:
         state["orders"] = fetch_transaction()
-        option = pyip.inputNum(order_menu, min = 0, max = 5)
+        option = pyip.inputInt(order_menu, min = 0, max = 5)
 
         if option == 0:
             save_state(state)
