@@ -138,11 +138,25 @@ def update_orders(state):
             if update != "":
                 state["orders"][idx][key] = update
             
-        elif key == "customer_address" or key == "customer_name" or key == "customer_phone":
+        elif key == "customer_address" or key == "customer_name":
             update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
             if update != "":
                 state["orders"][idx][key] = update
+                
+        elif key == "customer_phone":
+            while True:
+                update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
 
+                if update != "" and len(update)== 11:
+                    state["orders"][idx][key] = update
+                    break
+             
+                elif update!= "" and len(update)!= 11:
+                    print("wrong number of digits")
+                
+                elif update =="":
+                    break
+                   
         add(conn,update_transaction,tuple(state["orders"][idx].values()))
 # --------------------------------------------------- 
  

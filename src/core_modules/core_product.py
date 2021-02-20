@@ -40,14 +40,11 @@ def view_products(state):
     
 def create_products(state):
     os.system("clear")
-    name = str(input("product_name: "))
-    while True:
-        try: 
-            price = float(input("price: "))
-            break
-        except ValueError:
-            print("Only numbers are allowed")
-    quantity = pyip.inputNum("please select quantity  ", min = 0)
+    
+    name = pyip.inputStr("Enter the product: ")
+    price = pyip.inputFloat("Enter the new price: ")
+    
+    quantity = pyip.inputInt("please select quantity  ", min = 1)
     product_values = (name, quantity, price)
     try: 
         add(conn, insert_new, product_values)
@@ -62,16 +59,17 @@ def update_products(state):
     idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(state["products"])-1)
 
     for key in state["products"][idx].keys():
+        
         if key ==  "price":
-            update = input(f"{key}: ")
+            update = pyip.inputFloat(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ",blank=True, min=0.1)
             if update != "":
                 state["products"][idx][key] = float(update)
         elif key == "quantity":
-            update = input(f"{key}: ")
+            update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
             if update != "":
                 state["products"][idx][key] = int(update)
         elif key == "product_name":
-            update = input(f"{key}: ")
+            update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
             if update != "":
                 state["products"][idx][key] = update
     try:
@@ -84,7 +82,7 @@ def update_products(state):
 
 def delete_products(state):
     view_products(state)
-    idx = pyip.inputNum("please select a product to delete: ", min = 0, max =len(state["products"])-1)
+    idx = pyip.inputNum("please select a product to delete: ", min = 0, max =len(state["products"])-1, blank=True)
     if idx !="":
         add(conn, delete_product, state["products"][idx]["id"])
     os.system("clear")

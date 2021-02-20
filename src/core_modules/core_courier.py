@@ -38,15 +38,21 @@ def view_couriers(state):
     
 def create_couriers(state):
     os.system("clear")
-    name = str(input("courier_name: "))
-    phone = str(input("phone number: "))
+    name = str(input("write courier name: "))
+    
+    while True:
+            phone = str(input("write phone: "))
+            if len(phone)!= 11:
+                print("wrong number of digits")
+            elif len(phone)== 11:
+                break
 
-    courier_append = {
-        "name": name,
-        "phone": phone, 
-        }
+    # courier_append = {
+    #     "name": name,
+    #     "phone": phone, 
+    #     } tuple(courier_append.values())
     try:
-        add(conn, insert_new, tuple(courier_append.values()))
+        add(conn, insert_new, (name, phone))
     except:
         print("there is problem appending")
     
@@ -58,14 +64,25 @@ def update_couriers(state):
     idx = pyip.inputNum("please select a courier to update: ", min = 0, max =len(state["couriers"])-1)
 
     for key in state["couriers"][idx].keys():
+        
         if key ==  "courier_name":
-            update = input(f"{key}: ")
+            update = input(f"write the new {key}\n or leave it blank to skip, just press Enter to continue.....")
             if update != "":
                 state["couriers"][idx][key] = update
+        
         elif key == "courier_phone":
-            update = input(f"{key}: ")
-            if update != "":
-                state["couriers"][idx][key] = int(update)
+            while True:
+                update = pyip.inputInt(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue.....", blank=True)
+
+                if update !="" and len(update)== 11:
+                    state["couriers"][idx][key] = update
+                    break
+                
+                elif update !="" and len(update)!= 11:
+                    print("wrong number of digits")
+                
+                elif update =="":
+                     break
                 
     try:
         add(conn, update_new, tuple(state["couriers"][idx].values()))
@@ -76,7 +93,7 @@ def update_couriers(state):
     
 def delete_couriers(state):
     view_couriers(state)
-    idx = pyip.inputNum("please select a courier to delete: ", min = 0, max =len(state["couriers"])-1)
+    idx = pyip.inputNum("please select a courier to delete: ", min = 0, max =len(state["couriers"])-1,blank=True)
     if idx !="":
         add(conn, delete_courier, state["couriers"][idx]["id"])
     os.system("clear")
