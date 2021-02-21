@@ -1,43 +1,75 @@
 from unittest.mock import Mock, patch
-from src.core_modules.core_product import create_products, update_products, delete_products
+from src.core_modules.core_product import create_products, update_products, delete_products, fetch_products, view_products
 
-# unit testing with patch without injections 
 
+# def start_testing(): 
+
+def test_fetch_products():
+    expected = []
+    actuall = fetch_products()
+
+
+def test_view_products():
+    
+    state = {"products":[{"id":1, "product_name":"cat", "quantity":2, "price":2}]}
+    
+    mockprint=Mock
+    
+    excepted = {"products":[{"id":1, "product_name":"cat", "quantity":2, "price":2}]}
+    actuall = view_products
+    
+
+
+
+@patch("pyinputplus.inputInt")
+@patch("pyinputplus.inputFloat")
+@patch("pyinputplus.inputStr")
+def test_create_product(mock_str,mock_float,mock_int):
+    state=[]
+    
+    mock_str.side_effect = ["testing"]
+    mock_float.side_effect = [1]
+    mock_int.side_effect = [1]
+    
+    mock_add = Mock()
+    mock_print = Mock()
+    
+    expected = []
+    actuall = create_products(state)
+
+@patch("pyinputplus.inputInt")
 @patch("builtins.input")
-def test_create_product(mock_input):
-    product_list=[]
+@patch("pyinputplus.inputFloat")
+@patch("pyinputplus.inputNum") 
+
+def test_update_product(mock_num,mock_float,mock_input,mock_int):
     
-    mock_input.side_effect = ["cat", 2]
-    mock_save_products = Mock()
-    
-    expected = [{"name":"cat", "price":2 }]
-    actuall = create_products(product_list)
-    
-    
-@patch("builtins.input")    
-def test_update_product(fake_input):
-    product_list = [{"name" : "cat", "Price":2}]
-    
-    mock_save_products = Mock()
+    mock_num.side_effect = [0]
+    mock_float.side_effect = [1.5]
+    mock_int.side_effect = [4]
+    mock_input.side_effect = ["kat"]
+    state = {"products":[{"id":1, "product_name":"cat", "quantity":2, "price":2}]}
     mock_view_products = Mock()
+    mock_add= Mock
     
-    fake_input.side_effect = [0,"Ulia", 1.2]
-    
-    expected = [{"name":"Ulia", "price":1.2 }]
-    actuall = update_products(product_list)
+    expected = {"products":[{"id":1, "product_name":"cat", "quantity":2, "price":2}]}
+    actuall = update_products(state)
 
 
-@patch("builtins.input")
+
+
+
+@patch("pyinputplus.inputNum")
 def test_delete_products(fake_input):
+    fake_input.side_effect = [0]
+    state = {"products":[{"id":1, "product_name":"cat", "quantity":2, "price":2}]}
+    expected = {"products":[{"id":1, "product_name":"cat", "quantity":2, "price":2}]}
     
-    product_list = [{"name" : "cat", "Price":2}, {"name" : "cat", "Price":2}]
-    expected = [{"name" : "cat", "Price":2}]
-    mock_save_products = Mock()
     mock_view_products = Mock()
-    
-    fake_input.side_effect = [1]
-    actuall = delete_products(product_list)
-    
-    
-    
-    
+    mock_add = Mock()
+    mock_os_clear = Mock()
+    actuall = delete_products(state)
+
+        
+# if __name__ == '__main__':
+#     start_testing()

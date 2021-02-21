@@ -1,5 +1,4 @@
-import csv 
-
+import csv
 # for dic use below ones 
 
 def read_csv(filename):
@@ -16,7 +15,6 @@ def write_csv(data: list, filename):
         writer.writeheader()
         for row in data:
             writer.writerow(row)
- 
  
 def save_state(data):
     write_csv(data["couriers"], "./data/courier.csv" )

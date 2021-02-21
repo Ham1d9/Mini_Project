@@ -36,7 +36,7 @@ def view_products(state):
     for item in state["products"]:
         print_products.append(dict(product_name =item["product_name"],quantity= item["quantity"],price=item["price"]))
     print(tabulate.tabulate(print_products, headers="keys", tablefmt ="fancy_grid", showindex=True))
-    
+    return state 
     
 def create_products(state):
     os.system("clear")
@@ -65,7 +65,7 @@ def update_products(state):
             if update != "":
                 state["products"][idx][key] = float(update)
         elif key == "quantity":
-            update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
+            update = pyip.inputInt(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ",blank=True, min=1)
             if update != "":
                 state["products"][idx][key] = int(update)
         elif key == "product_name":
