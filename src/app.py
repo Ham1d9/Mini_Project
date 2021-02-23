@@ -34,6 +34,7 @@ def start_app():
         
         if option == 0:
             os.system("clear")
+            print("good bye")
             break
         
         elif option == 1:
