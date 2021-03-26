@@ -2,7 +2,7 @@ import os
 import tabulate
 import pyinputplus as pyip
 from src.core_modules.core_persistence import save_state
-from src.core_modules.core_db import query, add, conn
+from src.core_modules.core_db import query, add
 
 couriermenu = """
 Select a Number for your chosen Option 
@@ -21,7 +21,7 @@ insert_new = "INSERT INTO courier (courier_name, courier_phone) VALUES ( %s, %s)
 update_new = "UPDATE courier SET courier_name = %s, courier_phone = %s WHERE ID = %s"
 delete_courier = "DELETE from courier WHERE id = %s"
 
-def fetch_couriers():
+def fetch_couriers(conn):
     couriers = []
     courier = query(conn, "select * from courier")
     for raw in courier:
@@ -36,7 +36,7 @@ def view_couriers(state):
     print(tabulate.tabulate(print_courier, headers="keys", tablefmt ="fancy_grid", showindex=True))
     
     
-def create_couriers(state):
+def create_couriers(state,conn):
     os.system("clear")
     name = str(input("write courier name: "))
     
@@ -55,7 +55,7 @@ def create_couriers(state):
     return state
 
 
-def update_couriers(state):
+def update_couriers(state,conn):
     view_couriers(state)
     idx = pyip.inputInt("please select a courier to update: ", min = 0, max =len(state["couriers"])-1)
 
@@ -87,7 +87,7 @@ def update_couriers(state):
         print("something went wrong")            
     return state
     
-def delete_couriers(state):
+def delete_couriers(state,conn):
     view_couriers(state)
     idx = pyip.inputInt("please select a courier to delete: ", min = 0, max =len(state["couriers"])-1,blank=True)
     if idx !="":
@@ -96,10 +96,10 @@ def delete_couriers(state):
     return state
 
 
-def courier_menu(state):
+def courier_menu(state,conn):
     
     while True:
-        state["couriers"] = fetch_couriers()
+        state["couriers"] = fetch_couriers(conn)
         option2 = pyip.inputInt(couriermenu, min = 0, max = 4)
 
         if option2 == 0:
@@ -110,11 +110,11 @@ def courier_menu(state):
             view_couriers(state)
 
         elif option2 == 2:
-            create_couriers(state)
+            create_couriers(state,conn)
             
         elif option2 == 3:
-            update_couriers(state)
+            update_couriers(state,conn)
             
         elif  option2 == 4:
-            delete_couriers(state)
+            delete_couriers(state,conn)
 

@@ -14,7 +14,7 @@ PORT = int(os.environ.get("PORT"))
 
 def connection():
     return pymysql.connect(host=HOST, user=USER, password=PASSWORD, db=DB, port=PORT)
-conn = connection()
+# conn = connection()
 
 
 def query(conn, sql, values=None):

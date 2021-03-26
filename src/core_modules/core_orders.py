@@ -5,7 +5,7 @@ import pyinputplus as pyip
 from src.core_modules.core_persistence import save_state
 from src.core_modules.core_courier import view_couriers
 from src.core_modules.core_product import view_products
-from src.core_modules.core_db import query, add, conn
+from src.core_modules.core_db import query, add
 
 order_menu = """
 Select a Number for your chosen Option 
@@ -64,7 +64,7 @@ update_basket_quantity = "UPDATE basket set quantity = %s where transaction_id =
 delete_basket_product = "DELETE FROM basket WHERE id = %s"
 delte_transaction = "DELETE FROM transaction WHERE id =%s" 
 
-def fetch_transaction():
+def fetch_transaction(conn):
     transaction = []
     transactions = query(conn,sel_all_transaction)
     for raw in transactions:
@@ -79,7 +79,7 @@ def view_orders(state):
     print(tabulate.tabulate(print_orders, headers="keys", tablefmt ="fancy_grid", showindex=True))
        
 
-def create_orders(state):
+def create_orders(state,conn):
     os.system("clear")
     name = str(input("Write new name: "))
     address = str(input("write new address: "))
@@ -93,7 +93,7 @@ def create_orders(state):
     courier = pyip.inputInt("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
     values_trans = ("preparing", name,address,phone,state["couriers"][courier]["id"])
     add(conn,add_transaction,values_trans)
-    state["orders"] = fetch_transaction()
+    state["orders"] = fetch_transaction(conn)
     
     while True:
         view_products(state)
@@ -109,7 +109,7 @@ def create_orders(state):
     os.system("clear")
     return state
 
-def update_status(state):
+def update_status(state,conn):
     view_orders(state)
     select_idx = pyip.inputNum("Select a order: ", min = 0, max = len(state["orders"])-1)
     new_status = pyip.inputMenu(status_options,"select a status to update:\n", numbered=True)
@@ -117,7 +117,7 @@ def update_status(state):
     os.system("clear")
     return state
 
-def update_orders(state):
+def update_orders(state,conn):
     os.system("clear")
     view_orders(state)
     idx = pyip.inputNum("please select a order to update: ", min = 0, max =len(state["orders"])-1)
@@ -215,7 +215,7 @@ def update_orders(state):
     return state
 
 
-def delete_orders(state):
+def delete_orders(state,conn):
     view_orders(state)
     idx = pyip.inputInt("please select a order to delete\n or leave it blank to skip, press Enter to go back...",blank=True, min = 0, max =len(state["orders"])-1)
     if idx !="":
@@ -225,7 +225,7 @@ def delete_orders(state):
 
 
 
-def print_sub_menu(state):
+def print_sub_menu(state,conn):
     
     while True:
         view_orders(state)
@@ -256,10 +256,10 @@ def print_sub_menu(state):
             os.system("clear")
             
         
-def order_sub_menu(state):
+def order_sub_menu(state,conn):
     
     while True:
-        state["orders"] = fetch_transaction()
+        state["orders"] = fetch_transaction(conn)
         option = pyip.inputInt(order_menu, min = 0, max = 5)
 
         if option == 0:
@@ -267,19 +267,19 @@ def order_sub_menu(state):
             break
 
         elif option == 1:
-            print_sub_menu(state)
+            print_sub_menu(state,conn)
 
         elif option == 2:
-            create_orders(state)
+            create_orders(state,conn)
             
         elif option == 3:
-            update_status(state)
+            update_status(state,conn)
             
         elif option == 4:
-            update_orders(state)
+            update_orders(state,conn)
            
         elif  option == 5:
-            delete_orders(state)
+            delete_orders(state,conn)
          
 
 

@@ -2,7 +2,7 @@ import pyinputplus as pyip
 import os
 import tabulate
 from src.core_modules.core_persistence import save_state, load_state
-from src.core_modules.core_db import query, add, conn
+from src.core_modules.core_db import query, add
 
 
 productmenu = """
@@ -23,7 +23,7 @@ insert_new = "INSERT INTO product (product_name,quantity, price) VALUES ( %s, %s
 update_new = "UPDATE product SET product_name = %s, quantity= %s, price = %s WHERE ID = %s"
 delete_product = "DELETE from product WHERE id = %s"
 
-def fetch_products():
+def fetch_products(conn):
     products = []
     product = query(conn,sel_all_products)
     for raw in product:
@@ -38,7 +38,7 @@ def view_products(state):
     print(tabulate.tabulate(print_products, headers="keys", tablefmt ="fancy_grid", showindex=True))
     return state 
     
-def create_products(state):
+def create_products(state,conn):
     os.system("clear")
     
     name = pyip.inputStr("Enter the product: ")
@@ -54,7 +54,7 @@ def create_products(state):
     return state
 
 
-def update_products(state):
+def update_products(state,conn):
     view_products(state)
     idx = pyip.inputNum("please select a product to update: ", min = 0, max =len(state["products"])-1)
 
@@ -80,7 +80,7 @@ def update_products(state):
     return state
 
 
-def delete_products(state):
+def delete_products(state,conn):
     view_products(state)
     idx = pyip.inputNum("please select a product to delete: ", min = 0, max =len(state["products"])-1, blank=True)
     if idx !="":
@@ -89,11 +89,11 @@ def delete_products(state):
     return state
 
 
-def product_menu(state):
+def product_menu(state,conn):
     
     while True:
         
-        state["products"] = fetch_products()
+        state["products"] = fetch_products(conn)
         option2 = pyip.inputNum(productmenu, min = 0, max = 4)
 
         if option2 == 0:
@@ -104,13 +104,13 @@ def product_menu(state):
             view_products(state)
 
         elif option2 == 2:
-            create_products(state)
+            create_products(state,conn)
             
         elif option2 == 3:
-            update_products(state)
+            update_products(state,conn)
             
         elif  option2 == 4:
-            delete_products(state)
+            delete_products(state,conn)
 
 
 
