@@ -18,10 +18,10 @@ def connection():
 
 
 def query(conn, sql, values=None):
-    with conn.cursor() as cursor:
-        cursor.execute(sql,values)
-        result = cursor.fetchall()
-        return result
+    cursor =  conn.cursor() 
+    cursor.execute(sql,values)
+    result = cursor.fetchall()
+    return result
 
 def add(conn, sql, values):
     with conn.cursor() as cursor:
