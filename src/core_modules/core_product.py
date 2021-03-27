@@ -23,7 +23,7 @@ insert_new = "INSERT INTO product (product_name,quantity, price) VALUES ( %s, %s
 update_new = "UPDATE product SET product_name = %s, quantity= %s, price = %s WHERE ID = %s"
 delete_product = "DELETE from product WHERE id = %s"
 
-def fetch_products(conn):
+def fetch_products(conn,query=query):
     products = []
     product = query(conn,sel_all_products)
     for raw in product:
