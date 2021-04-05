@@ -2,7 +2,8 @@ import pyinputplus as pyip
 import os
 import tabulate
 from src.core_modules.core_persistence import save_state, load_state
-from src.core_modules.core_db import query, add
+from src.core_modules import core_db as db
+# import query, add
 
 
 productmenu = """
@@ -23,9 +24,10 @@ insert_new = "INSERT INTO product (product_name,quantity, price) VALUES ( %s, %s
 update_new = "UPDATE product SET product_name = %s, quantity= %s, price = %s WHERE ID = %s"
 delete_product = "DELETE from product WHERE id = %s"
 
-def fetch_products(conn,query=query):
+def fetch_products(conn):
     products = []
-    product = query(conn,sel_all_products)
+    product = db.query(conn,sel_all_products)
+    print(product)
     for raw in product:
         products.append({"product_name":raw[1],"quantity":raw[2],"price":raw[3], "id":raw[0]})
     return products

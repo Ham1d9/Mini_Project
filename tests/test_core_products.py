@@ -3,16 +3,17 @@ from src.core_modules.core_product import create_products, update_products, dele
 
 
 
-# @patch("src.core_modules.core_db.query")
-def test_fetch_products():
-    mock_query = Mock()
-    mock_query.return_value = ("1","coke","12","13")
+@patch("src.core_modules.core_db.query")
+def test_fetch_products(mock_query):
+    # mock_query. side_effect = Mock()
+    mock_query.return_value = ((2, 'coke cola', 6, 0.8), (26, 'water', 8, 1.3))
     # mock_query.return_value = {"product_name":"coke", "quantity":12,"price":11,"id":1}
     mock_conn = Mock()
     
     # mock_connect.cursor.return_value.fetchall.return_value = ""
-    expected = [{"product_name":"coke", "quantity":12,"price":11,"id":1}]
-    actual = fetch_products(mock_conn,mock_query)
+    expected = [{"product_name":"coke cola", "quantity":6,"price":0.8,"id":2},{"product_name":"water", "quantity":8,"price":1.3,"id":26}]
+    actual = fetch_products(mock_conn)
+    print(actual)
     assert actual == expected
 
 

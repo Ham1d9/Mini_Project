@@ -7,7 +7,8 @@ from src.core_modules.core_courier import courier_menu, fetch_couriers
 from src.core_modules.core_persistence import load_state
 from src.core_modules import core_db as db
 
-state  = load_state(fetch_couriers,fetch_products,fetch_transaction)
+conn = db.connection()
+state  = load_state(fetch_couriers,fetch_products,fetch_transaction,conn)
 
 
 
@@ -26,9 +27,8 @@ Select a Number foryour chosen Option
 [0] Exit App
 
 """
-def start_app():
+def start_app(conn):
     
-    conn = db.connection()
     
     while True:
         os.system("clear")
@@ -56,4 +56,4 @@ def start_app():
  
             
 if __name__ == '__main__':
-    start_app()
+    start_app(conn)
