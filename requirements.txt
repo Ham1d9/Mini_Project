@@ -2,3 +2,4 @@ pyinputplus
 tabulate
 pymysql[rsa]
 python-dotenv
+pylint

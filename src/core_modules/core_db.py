@@ -14,23 +14,15 @@ PORT = int(os.environ.get("PORT"))
 
 def connection():
     return pymysql.connect(host=HOST, user=USER, password=PASSWORD, db=DB, port=PORT)
-conn = connection()
-
 
 def query(conn, sql, values=None):
-    with conn.cursor() as cursor:
-        cursor.execute(sql,values)
-        result = cursor.fetchall()
-        return result
+    cursor = conn.cursor()
+    cursor.execute(sql, values)
+    result = cursor.fetchall()
+    return result
+
 
 def add(conn, sql, values):
     with conn.cursor() as cursor:
-          cursor.execute(sql,values)
-          conn.commit()
-
-
-
-
-
-
-
+        cursor.execute(sql, values)
+        conn.commit()
