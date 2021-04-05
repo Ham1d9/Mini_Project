@@ -3,7 +3,7 @@ import os
 import tabulate
 from src.core_modules.core_persistence import save_state, load_state
 from src.core_modules import core_db as db
-# import query, add
+# import query, db.add
 
 
 productmenu = """
@@ -49,7 +49,7 @@ def create_products(state,conn):
     quantity = pyip.inputInt("please select quantity: ", min = 1)
     product_values = (name, quantity, price)
     try: 
-        add(conn, insert_new, product_values)
+        db.add(conn, insert_new, product_values)
         os.system("clear")
     except:
         print("there is a problem with creating new product")  
@@ -75,7 +75,7 @@ def update_products(state,conn):
             if update != "":
                 state["products"][idx][key] = update
     try:
-        add(conn, update_new, tuple(state["products"][idx].values()))
+        db.add(conn, update_new, tuple(state["products"][idx].values()))
         os.system("clear")   
     except: 
         print("something went wrong")            
@@ -86,7 +86,7 @@ def delete_products(state,conn):
     view_products(state)
     idx = pyip.inputNum("please select a product to delete: ", min = 0, max =len(state["products"])-1, blank=True)
     if idx !="":
-        add(conn, delete_product, state["products"][idx]["id"])
+        db.add(conn, delete_product, state["products"][idx]["id"])
     os.system("clear")
     return state
 
