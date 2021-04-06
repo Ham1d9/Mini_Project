@@ -1,13 +1,16 @@
-# from unittest.mock import Mock, patch
-# from src.core_modules.core_orders import fetch_transaction,view_orders,update_status,delete_orders
+from unittest.mock import Mock, patch
+from src.core_modules.core_orders import fetch_transaction,view_orders,update_status,delete_orders
 
 
 
-
-# def test_fetch_transaction():
+@patch("src.core_modules.core_db.query")
+def test_fetch_transaction(mock_query):
     
-#     expected = []
-#     actuall = fetch_transaction
+    mock_query.return_value = ((19, 'out for delivery', 'kat', '1 manchester road', '07345643443', 'kaily', '07453485654', 4),)
+    conn = Mock()
+    expected = [{"status":'out for delivery',"customer_name":'kat',"customer_address":'1 manchester road',"customer_phone":'07345643443',"courier_name":'kaily',"courier_phone":'07453485654',"courier_id":4,"id":19}]
+    actual = fetch_transaction(conn)
+    assert expected == actual
 
 
 # def test_view_transaction():

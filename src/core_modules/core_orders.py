@@ -5,7 +5,7 @@ import pyinputplus as pyip
 from src.core_modules.core_persistence import save_state
 from src.core_modules.core_courier import view_couriers
 from src.core_modules.core_product import view_products
-from src.core_modules.core_db import query, add
+from src.core_modules import core_db as db
 
 order_menu = """
 Select a Number for your chosen Option 
@@ -66,7 +66,8 @@ delte_transaction = "DELETE FROM transaction WHERE id =%s"
 
 def fetch_transaction(conn):
     transaction = []
-    transactions = query(conn,sel_all_transaction)
+    transactions = db.query(conn,sel_all_transaction)
+    print(transactions)
     for raw in transactions:
         transaction.append({"status":raw[1],"customer_name":raw[2],"customer_address":raw[3],"customer_phone":raw[4],"courier_name":raw[5],"courier_phone":raw[6],"courier_id":raw[7],"id":raw[0]})
     return transaction
@@ -92,19 +93,19 @@ def create_orders(state,conn):
     view_couriers(state)
     courier = pyip.inputInt("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
     values_trans = ("preparing", name,address,phone,state["couriers"][courier]["id"])
-    add(conn,add_transaction,values_trans)
+    db.add(conn,add_transaction,values_trans)
     state["orders"] = fetch_transaction(conn)
     
     while True:
         view_products(state)
-        ask = "select the product and press enter to add it \n or leave it blank to contine ,just press Enter to go back.....  "
+        ask = "select the product and press enter to db.add it \n or leave it blank to contine ,just press Enter to go back.....  "
         update_value = pyip.inputInt(ask, min = 0, max = len(state["products"])-1, blank=True)
         if update_value == "":
             break
         else:
             quantity_value = pyip.inputInt("\nselect a quantity: ", min = 1)
             value_basket = (state["orders"][len(state["orders"])-1]["id"],state["products"][update_value]["id"],quantity_value)
-            add(conn,add_basket,value_basket)
+            db.add(conn,add_basket,value_basket)
     
     os.system("clear")
     return state
@@ -113,7 +114,7 @@ def update_status(state,conn):
     view_orders(state)
     select_idx = pyip.inputNum("Select a order: ", min = 0, max = len(state["orders"])-1)
     new_status = pyip.inputMenu(status_options,"select a status to update:\n", numbered=True)
-    add(conn,update_status_sql,(new_status,state["orders"][select_idx]["id"]))
+    db.add(conn,update_status_sql,(new_status,state["orders"][select_idx]["id"]))
     os.system("clear")
     return state
 
@@ -157,12 +158,12 @@ def update_orders(state,conn):
                 elif update =="":
                     break
                    
-        add(conn,update_transaction,tuple(state["orders"][idx].values()))
+        db.add(conn,update_transaction,tuple(state["orders"][idx].values()))
 # --------------------------------------------------- 
  
     def refresh():
         basket_data = []
-        raw_data = query(conn,sel_sql_basket_with_id, state["orders"][idx]["id"])    
+        raw_data = db.query(conn,sel_sql_basket_with_id, state["orders"][idx]["id"])    
         for raw in raw_data:
             basket_data.append({"id":raw[0],"product_name":raw[1],"quantity":raw[2],"price":raw[3],"product_id":raw[4]})
         return basket_data
@@ -202,15 +203,15 @@ def update_orders(state,conn):
                 ask_new_product = "select a new product: "
                 update_product_idx = pyip.inputInt(ask_new_product, min = 0, max = len(state["products"])-1, blank=True)
                 update_product_value = (state["products"][update_product_idx]["id"],state["orders"][idx]["id"],basket_data[idx_basket]["id"])
-                add(conn,update_basket_product,update_product_value)
+                db.add(conn,update_basket_product,update_product_value)
                
             elif option_update == 2:
                 ask_new_quantity = pyip.inputInt("select a new quantity: ", min = 1)
                 update_quantity_value = (ask_new_quantity,state["orders"][idx]["id"],basket_data[idx_basket]["id"])
-                add(conn,update_basket_quantity,update_quantity_value)
+                db.add(conn,update_basket_quantity,update_quantity_value)
             
             elif option_update == 3:
-                add(conn,delete_basket_product,basket_data[idx_basket]["id"])
+                db.add(conn,delete_basket_product,basket_data[idx_basket]["id"])
     os.system("clear")                
     return state
 
@@ -219,7 +220,7 @@ def delete_orders(state,conn):
     view_orders(state)
     idx = pyip.inputInt("please select a order to delete\n or leave it blank to skip, press Enter to go back...",blank=True, min = 0, max =len(state["orders"])-1)
     if idx !="":
-        add(conn, delte_transaction,state["orders"][idx]["id"])
+        db.add(conn, delte_transaction,state["orders"][idx]["id"])
     os.system("clear")
     return state
 
@@ -240,7 +241,7 @@ def print_sub_menu(state,conn):
            
             parsed_data = []
             price_list = []
-            raw_data = query(conn,sel_sql_basket, state["orders"][idx]["id"])
+            raw_data = db.query(conn,sel_sql_basket, state["orders"][idx]["id"])
             
             for raw in raw_data:
                 parsed_data.append({"product_name":raw[0],"quantity":raw[2],"price":raw[1]})
