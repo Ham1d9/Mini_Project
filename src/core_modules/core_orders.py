@@ -1,4 +1,3 @@
-
 import os
 import tabulate
 import pyinputplus as pyip
@@ -20,7 +19,7 @@ Select a Number for your chosen Option
 --------------------------------------
 [0]  Return to Main Menu
 """
-top_part_print =  """
+top_part_print = """
 -----------------------------------------
         Order Information 
 -----------------------------------------
@@ -31,261 +30,370 @@ Order status: {}
  
 Courier_Name: {} Phone: {}
 """
-basket_item_update= """
+basket_item_update = """
 [0] go back to products list 
 [1] change the item 
 [2] change the quantity
 [3] delete the product from the order
 """
 total = """  Total\t\t\t\t   £{}"""
-status_options = ["preparing",  "ready", "delayed", "out for delivery", "delivered"]
+status_options = ["preparing", "ready", "delayed", "out for delivery", "delivered"]
 
 sel_all_transaction = """select transaction.id,status,customer_name,customer_address,customer_phone, 
 courier_name,courier_phone,courier_id from transaction join courier on courier.id = transaction.courier_id;"""
 
-sel_sql_basket= """select product_name,price,basket.quantity from basket join product on product.id = basket.product_id 
+sel_sql_basket = """select product_name,price,basket.quantity from basket join product on product.id = basket.product_id 
         where transaction_id = %s """
-        
+
 sel_sql_basket_with_id = """select basket.id,product_name,basket.quantity,price,product_id from basket join product on product.id = basket.product_id 
         where transaction_id = %s """
-             
-add_transaction = """INSERT INTO transaction (status, customer_name, customer_address,
-        customer_phone, courier_id) VALUES (%s, %s, %s, %s, %s)"""   
-        
-add_basket = "INSERT INTO basket (transaction_id, product_id, quantity) VALUES(%s, %s, %s)"
 
-update_status_sql = "UPDATE transaction SET status = %s WHERE ID = %s"      
+add_transaction = """INSERT INTO transaction (status, customer_name, customer_address,
+        customer_phone, courier_id) VALUES (%s, %s, %s, %s, %s)"""
+
+add_basket = (
+    "INSERT INTO basket (transaction_id, product_id, quantity) VALUES(%s, %s, %s)"
+)
+
+update_status_sql = "UPDATE transaction SET status = %s WHERE ID = %s"
 
 update_transaction = "UPDATE transaction SET status=%s, customer_name=%s, customer_address=%s, customer_phone=%s, courier_id=%s WHERE ID = %s"
 
-update_basket_product = "UPDATE basket set product_id= %s where transaction_id = %s and id =%s"
-update_basket_quantity = "UPDATE basket set quantity = %s where transaction_id = %s and id =%s"
+update_basket_product = (
+    "UPDATE basket set product_id= %s where transaction_id = %s and id =%s"
+)
+update_basket_quantity = (
+    "UPDATE basket set quantity = %s where transaction_id = %s and id =%s"
+)
 
 delete_basket_product = "DELETE FROM basket WHERE id = %s"
-delte_transaction = "DELETE FROM transaction WHERE id =%s" 
+delte_transaction = "DELETE FROM transaction WHERE id =%s"
+
 
 def fetch_transaction(conn):
     transaction = []
-    transactions = db.query(conn,sel_all_transaction)
+    transactions = db.query(conn, sel_all_transaction)
     print(transactions)
     for raw in transactions:
-        transaction.append({"status":raw[1],"customer_name":raw[2],"customer_address":raw[3],"customer_phone":raw[4],"courier_name":raw[5],"courier_phone":raw[6],"courier_id":raw[7],"id":raw[0]})
+        transaction.append(
+            {
+                "status": raw[1],
+                "customer_name": raw[2],
+                "customer_address": raw[3],
+                "customer_phone": raw[4],
+                "courier_name": raw[5],
+                "courier_phone": raw[6],
+                "courier_id": raw[7],
+                "id": raw[0],
+            }
+        )
     return transaction
+
 
 def view_orders(state):
     os.system("clear")
     print_orders = []
     for order in state["orders"]:
-        print_orders.append(dict(status=order["status"],customer_name=order["customer_name"],customer_address=order["customer_address"],customer_phone=order["customer_phone"]))
-    print(tabulate.tabulate(print_orders, headers="keys", tablefmt ="fancy_grid", showindex=True))
-       
+        print_orders.append(
+            dict(
+                status=order["status"],
+                customer_name=order["customer_name"],
+                customer_address=order["customer_address"],
+                customer_phone=order["customer_phone"],
+            )
+        )
+    print(
+        tabulate.tabulate(
+            print_orders, headers="keys", tablefmt="fancy_grid", showindex=True
+        )
+    )
 
-def create_orders(state,conn):
+
+def create_orders(state, conn):
     os.system("clear")
     name = str(input("Write new name: "))
     address = str(input("write new address: "))
     while True:
         phone = pyip.inputStr("write new phone: ")
-        if len(phone)!= 11:
+        if len(phone) != 11:
             print("wrong number of digits")
-        elif len(phone)== 11:
+        elif len(phone) == 11:
             break
     view_couriers(state)
-    courier = pyip.inputInt("Select a courier for the order: ", min = 0, max = len(state["couriers"])-1)
-    values_trans = ("preparing", name,address,phone,state["couriers"][courier]["id"])
-    db.add(conn,add_transaction,values_trans)
+    courier = pyip.inputInt(
+        "Select a courier for the order: ", min=0, max=len(state["couriers"]) - 1
+    )
+    values_trans = ("preparing", name, address, phone, state["couriers"][courier]["id"])
+    db.add(conn, add_transaction, values_trans)
     state["orders"] = fetch_transaction(conn)
-    
+
     while True:
         view_products(state)
         ask = "select the product and press enter to db.add it \n or leave it blank to contine ,just press Enter to go back.....  "
-        update_value = pyip.inputInt(ask, min = 0, max = len(state["products"])-1, blank=True)
+        update_value = pyip.inputInt(
+            ask, min=0, max=len(state["products"]) - 1, blank=True
+        )
         if update_value == "":
             break
         else:
-            quantity_value = pyip.inputInt("\nselect a quantity: ", min = 1)
-            value_basket = (state["orders"][len(state["orders"])-1]["id"],state["products"][update_value]["id"],quantity_value)
-            db.add(conn,add_basket,value_basket)
-    
+            quantity_value = pyip.inputInt("\nselect a quantity: ", min=1)
+            value_basket = (
+                state["orders"][len(state["orders"]) - 1]["id"],
+                state["products"][update_value]["id"],
+                quantity_value,
+            )
+            db.add(conn, add_basket, value_basket)
+
     os.system("clear")
     return state
 
-def update_status(state,conn):
+
+def update_status(state, conn):
     view_orders(state)
-    select_idx = pyip.inputNum("Select a order: ", min = 0, max = len(state["orders"])-1)
-    new_status = pyip.inputMenu(status_options,"select a status to update:\n", numbered=True)
-    db.add(conn,update_status_sql,(new_status,state["orders"][select_idx]["id"]))
+    select_idx = pyip.inputNum("Select a order: ", min=0, max=len(state["orders"]) - 1)
+    new_status = pyip.inputMenu(
+        status_options, "select a status to update:\n", numbered=True
+    )
+    db.add(conn, update_status_sql, (new_status, state["orders"][select_idx]["id"]))
     os.system("clear")
     return state
 
-def update_orders(state,conn):
+
+def update_orders(state, conn):
     os.system("clear")
     view_orders(state)
-    idx = pyip.inputNum("please select a order to update: ", min = 0, max =len(state["orders"])-1)
-    del state["orders"][idx]["courier_name"],state["orders"][idx]["courier_phone"]
-    
+    idx = pyip.inputNum(
+        "please select a order to update: ", min=0, max=len(state["orders"]) - 1
+    )
+    del state["orders"][idx]["courier_name"], state["orders"][idx]["courier_phone"]
+
     for key in state["orders"][idx].keys():
-        
+
         if key == "courier_id":
             view_couriers(state)
-            update = pyip.inputInt("\nselect a new courier\n or leave it blank to skip,just press Enter to continue.... : ",blank=True, min=0, max=len(state["couriers"])-1)
+            update = pyip.inputInt(
+                "\nselect a new courier\n or leave it blank to skip,just press Enter to continue.... : ",
+                blank=True,
+                min=0,
+                max=len(state["couriers"]) - 1,
+            )
             if update != "":
                 state["orders"][idx][key] = state["couriers"][update]["id"]
-               
+
         elif key == "status":
             view_orders(state)
-            status_prompt= "select one of the option to update status.\n or leave it blank to skip,just press Enter to continue.....\n"
-            update = pyip.inputMenu(status_options,prompt=status_prompt, blank=True, numbered=True)
+            status_prompt = "select one of the option to update status.\n or leave it blank to skip,just press Enter to continue.....\n"
+            update = pyip.inputMenu(
+                status_options, prompt=status_prompt, blank=True, numbered=True
+            )
             if update != "":
                 state["orders"][idx][key] = update
-            
+
         elif key == "customer_address" or key == "customer_name":
-            update = input(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ")
+            update = input(
+                f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... "
+            )
             if update != "":
                 state["orders"][idx][key] = update
-                
+
         elif key == "customer_phone":
             while True:
-                update = pyip.inputStr(f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ",blank=True)
+                update = pyip.inputStr(
+                    f"\nwrite the new {key}\n or leave it blank to skip, just press Enter to continue..... ",
+                    blank=True,
+                )
 
-                if update != "" and len(update)== 11:
+                if update != "" and len(update) == 11:
                     state["orders"][idx][key] = update
                     break
-             
-                elif update!= "" and len(update)!= 11:
+
+                elif update != "" and len(update) != 11:
                     print("wrong number of digits")
-                
-                elif update =="":
+
+                elif update == "":
                     break
-                   
-        db.add(conn,update_transaction,tuple(state["orders"][idx].values()))
-# --------------------------------------------------- 
- 
+
+        db.add(conn, update_transaction, tuple(state["orders"][idx].values()))
+    # ---------------------------------------------------
+
     def refresh():
         basket_data = []
-        raw_data = db.query(conn,sel_sql_basket_with_id, state["orders"][idx]["id"])    
+        raw_data = db.query(conn, sel_sql_basket_with_id, state["orders"][idx]["id"])
         for raw in raw_data:
-            basket_data.append({"id":raw[0],"product_name":raw[1],"quantity":raw[2],"price":raw[3],"product_id":raw[4]})
+            basket_data.append(
+                {
+                    "id": raw[0],
+                    "product_name": raw[1],
+                    "quantity": raw[2],
+                    "price": raw[3],
+                    "product_id": raw[4],
+                }
+            )
         return basket_data
-    
+
     basket_data = refresh()
-    
+
     def basket_print(basket_data):
         basket_print = []
-        for dic in basket_data:  
-            basket_print.append(dict(product_name=dic["product_name"],quantity=dic["quantity"],price=dic["price"]))
-        print(tabulate.tabulate(basket_print, headers="keys", tablefmt ="fancy_grid", showindex=True))
-        
-    def basket_print_idx(basket_data,idx_basket):
+        for dic in basket_data:
+            basket_print.append(
+                dict(
+                    product_name=dic["product_name"],
+                    quantity=dic["quantity"],
+                    price=dic["price"],
+                )
+            )
+        print(
+            tabulate.tabulate(
+                basket_print, headers="keys", tablefmt="fancy_grid", showindex=True
+            )
+        )
+
+    def basket_print_idx(basket_data, idx_basket):
         basket_print = []
-        for dic in basket_data:  
-            basket_print.append(dict(product_name=dic["product_name"],quantity=dic["quantity"],price=dic["price"]))
-        print(tabulate.tabulate([basket_print[idx_basket]], headers="keys", tablefmt ="fancy_grid"))
+        for dic in basket_data:
+            basket_print.append(
+                dict(
+                    product_name=dic["product_name"],
+                    quantity=dic["quantity"],
+                    price=dic["price"],
+                )
+            )
+        print(
+            tabulate.tabulate(
+                [basket_print[idx_basket]], headers="keys", tablefmt="fancy_grid"
+            )
+        )
 
     while True:
         os.system("clear")
         basket_data = refresh()
         basket_print(basket_data)
-        idx_basket = pyip.inputInt("please select a product to update\n or leave it blank to skip ,just press Enter to continue.....  ",blank=True, min = 0, max =len(basket_data)-1)
-        
+        idx_basket = pyip.inputInt(
+            "please select a product to update\n or leave it blank to skip ,just press Enter to continue.....  ",
+            blank=True,
+            min=0,
+            max=len(basket_data) - 1,
+        )
+
         if idx_basket == "":
             break
-        
+
         else:
             os.system("clear")
-            basket_print_idx(basket_data,idx_basket)
-            option_update =  pyip.inputInt(basket_item_update, min = 0, max =3)
-            
+            basket_print_idx(basket_data, idx_basket)
+            option_update = pyip.inputInt(basket_item_update, min=0, max=3)
+
             if option_update == 0:
                 pass
             elif option_update == 1:
                 view_products(state)
                 ask_new_product = "select a new product: "
-                update_product_idx = pyip.inputInt(ask_new_product, min = 0, max = len(state["products"])-1, blank=True)
-                update_product_value = (state["products"][update_product_idx]["id"],state["orders"][idx]["id"],basket_data[idx_basket]["id"])
-                db.add(conn,update_basket_product,update_product_value)
-               
+                update_product_idx = pyip.inputInt(
+                    ask_new_product, min=0, max=len(state["products"]) - 1, blank=True
+                )
+                update_product_value = (
+                    state["products"][update_product_idx]["id"],
+                    state["orders"][idx]["id"],
+                    basket_data[idx_basket]["id"],
+                )
+                db.add(conn, update_basket_product, update_product_value)
+
             elif option_update == 2:
-                ask_new_quantity = pyip.inputInt("select a new quantity: ", min = 1)
-                update_quantity_value = (ask_new_quantity,state["orders"][idx]["id"],basket_data[idx_basket]["id"])
-                db.add(conn,update_basket_quantity,update_quantity_value)
-            
+                ask_new_quantity = pyip.inputInt("select a new quantity: ", min=1)
+                update_quantity_value = (
+                    ask_new_quantity,
+                    state["orders"][idx]["id"],
+                    basket_data[idx_basket]["id"],
+                )
+                db.add(conn, update_basket_quantity, update_quantity_value)
+
             elif option_update == 3:
-                db.add(conn,delete_basket_product,basket_data[idx_basket]["id"])
-    os.system("clear")                
-    return state
-
-
-def delete_orders(state,conn):
-    view_orders(state)
-    idx = pyip.inputInt("please select a order to delete\n or leave it blank to skip, press Enter to go back...",blank=True, min = 0, max =len(state["orders"])-1)
-    if idx !="":
-        db.add(conn, delte_transaction,state["orders"][idx]["id"])
+                db.add(conn, delete_basket_product, basket_data[idx_basket]["id"])
     os.system("clear")
     return state
 
 
+def delete_orders(state, conn):
+    view_orders(state)
+    idx = pyip.inputInt(
+        "please select a order to delete\n or leave it blank to skip, press Enter to go back...",
+        blank=True,
+        min=0,
+        max=len(state["orders"]) - 1,
+    )
+    if idx != "":
+        db.add(conn, delte_transaction, state["orders"][idx]["id"])
+    os.system("clear")
+    return state
 
-def print_sub_menu(state,conn):
-    
+
+def print_sub_menu(state, conn):
+
     while True:
         view_orders(state)
-        idx = pyip.inputInt("select a order to see more \n or press Enter to go back menu..... ",blank=True, min=0, max=len(state["orders"]))
+        idx = pyip.inputInt(
+            "select a order to see more \n or press Enter to go back menu..... ",
+            blank=True,
+            min=0,
+            max=len(state["orders"]),
+        )
         os.system("clear")
-        
+
         if idx == "":
             os.system("clear")
             break
-        
+
         else:
-           
+
             parsed_data = []
             price_list = []
-            raw_data = db.query(conn,sel_sql_basket, state["orders"][idx]["id"])
-            
+            raw_data = db.query(conn, sel_sql_basket, state["orders"][idx]["id"])
+
             for raw in raw_data:
-                parsed_data.append({"product_name":raw[0],"quantity":raw[2],"price":raw[1]})
-                price_list.append(raw[1]*raw[2])
-                
-            print(top_part_print.format(state["orders"][idx]["customer_name"],state["orders"][idx]["customer_address"],\
-                state["orders"][idx]["customer_phone"],state["orders"][idx]["status"],state["orders"][idx]["courier_name"],\
-                    state["orders"][idx]["courier_phone"]))
-            print(tabulate.tabulate(parsed_data, headers="keys", tablefmt ="psql"))
+                parsed_data.append(
+                    {"product_name": raw[0], "quantity": raw[2], "price": raw[1]}
+                )
+                price_list.append(raw[1] * raw[2])
+
+            print(
+                top_part_print.format(
+                    state["orders"][idx]["customer_name"],
+                    state["orders"][idx]["customer_address"],
+                    state["orders"][idx]["customer_phone"],
+                    state["orders"][idx]["status"],
+                    state["orders"][idx]["courier_name"],
+                    state["orders"][idx]["courier_phone"],
+                )
+            )
+            print(tabulate.tabulate(parsed_data, headers="keys", tablefmt="psql"))
             print(total.format(sum(price_list)))
-            
+
             input("\npress any key to go back......")
             os.system("clear")
-            
-        
-def order_sub_menu(state,conn):
-    
+
+
+def order_sub_menu(state, conn):
+
     while True:
         state["orders"] = fetch_transaction(conn)
-        option = pyip.inputInt(order_menu, min = 0, max = 5)
+        option = pyip.inputInt(order_menu, min=0, max=5)
 
         if option == 0:
             save_state(state)
             break
 
         elif option == 1:
-            print_sub_menu(state,conn)
+            print_sub_menu(state, conn)
 
         elif option == 2:
-            create_orders(state,conn)
-            
+            create_orders(state, conn)
+
         elif option == 3:
-            update_status(state,conn)
-            
+            update_status(state, conn)
+
         elif option == 4:
-            update_orders(state,conn)
-           
-        elif  option == 5:
-            delete_orders(state,conn)
-         
+            update_orders(state, conn)
 
-
-
-
-
-
-
+        elif option == 5:
+            delete_orders(state, conn)
